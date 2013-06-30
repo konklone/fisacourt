@@ -4,11 +4,17 @@ require 'rubygems'
 require 'yaml'
 require 'fileutils'
 
+# install these 3 gems
 require 'twitter'
-require 'pony' # email
-require 'twilio-rb' # sms
+require 'pony'
+require 'twilio-rb'
 
-# configure stuff
+
+# configuration
+
+# change to current dir
+FileUtils.chdir File.dirname(__FILE__)
+
 def config
   @config ||= YAML.load(File.read("config.yml"))
 end
@@ -29,7 +35,7 @@ Twilio::Config.setup(
 )
 
 
-# check FISA court for updates
+# check FISA court for updates, compare to last check
 def check_fisa
   system "wget http://www.uscourts.gov/uscourts/courts/fisc/index.html --output-document=current.html"
 
