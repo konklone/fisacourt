@@ -3,24 +3,20 @@
 require 'rubygems'
 require 'yaml'
 require 'fileutils'
-
-# install these 3 gems
+require 'open-uri'
 require 'twitter'
 require 'pony'
 require 'twilio-rb'
-
-
-# configuration
+require 'git'
 
 # change to current dir
 FileUtils.chdir File.dirname(__FILE__)
 
+@git = Git.open './'
+
 def config
   @config ||= YAML.load(File.read("config.yml"))
 end
-
-FileUtils.mkdir_p "changes"
-FileUtils.mkdir_p "archive"
 
 if config['twitter']
   Twitter.configure do |twitter|
@@ -31,39 +27,28 @@ if config['twitter']
   end
 end
 
-Twilio::Config.setup(
-  account_sid: config['twilio']['account_sid'],
-  auth_token: config['twilio']['auth_token']
-)
-
+if config["twillo"]
+  Twilio::Config.setup(
+    account_sid: config['twilio']['account_sid'],
+    auth_token: config['twilio']['auth_token']
+  )
+end
 
 # check FISA court for updates, compare to last check
 def check_fisa
-  system "wget http://www.uscourts.gov/uscourts/courts/fisc/index.html --output-document=current.html"
-
-  timestamp = Time.now.strftime "%Y-%m-%d-%H%M"
-  system "cp current.html archive/#{timestamp}.html"
-
-  if File.exists?("last.html")
-    last = File.read("last.html")
-    current = File.read "current.html"
-
-    if last != current
-      # for convenience, freeze the different ones elsewhere too
-      system "cp last.html changes/#{timestamp}-last.html"
-      system "cp current.html changes/#{timestamp}-current.html"
-
-      system "mv current.html last.html"
-      true
-    else
-      system "mv current.html last.html"
-      false
+  open("http://www.uscourts.gov/uscourts/courts/fisc/index.html") do |uri|
+    open("fisa.html", "wt") do |file|
+      file.write uri.read
+      file.close
     end
-  else
-    # first run, nothing to compare to
-    puts "Initializing: just downloading data, not notifying."
-    system "mv current.html last.html"
-    false
+
+    return false unless changed?
+
+    @git.add "fisa.html"
+    @git.commit "Automated update"
+    @git.push
+    true
+
   end
 end
 
@@ -72,10 +57,12 @@ def notify_fisa(msg)
   Twitter.update(msg) if config['twitter']
   Pony.mail(config['email'].merge(body: msg)) if config['email']
   Twilio::SMS.create(to: config['twilio']['to'], from: config['twilio']['from'], body: msg) if config['twilio']
-
   puts "Notified: #{msg}"
 end
 
+def changed?
+  @git.diff('HEAD','fisa.html').entries.length != 0
+end
 
 if check_fisa
   notify_fisa "Just updated with something! http://www.uscourts.gov/uscourts/courts/fisc/index.html"

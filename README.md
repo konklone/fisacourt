@@ -16,10 +16,10 @@ Since then, several other litigants (Microsoft, Google, and an unnamed "Provider
 
 #### Setup and Usage
 
-Install three Ruby gems:
+Install dependencies:
 
 ```bash
-gem install twitter pony twilio-rb
+bundle install
 ```
 
 Copy `config.yml.example` to `config.yml`, then uncomment and fill in any of the sections for `twitter`, `email`, and `twilio` (SMS) to enable those kinds of notifications. Details on enabling each of them are below.
@@ -27,12 +27,12 @@ Copy `config.yml.example` to `config.yml`, then uncomment and fill in any of the
 Once configured, run the script once to save the current state of the FISC docket (this won't send any alerts):
 
 ```bash
-ruby fisa.rb
+bundle exec ruby fisa.rb
 ```
 
-This will save a `last.html` file to disk.
+This will update `./fisa.html` and push it to GitHub, if changed.
 
-Any future executions of `fisa.rb` will check the current state of the FISC docket against `last.html`, and notify upon changes. If there are changes, the script will also copy the "before" and "after" versions of the change to a `changes` directory.
+Any future executions of `fisa.rb` will check the current state of the FISC docket against the repository, and notify upon changes. If there are changes, you can view them by viewing the diff on GitHub.
 
 #### Configuring services
 
