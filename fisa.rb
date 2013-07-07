@@ -48,15 +48,25 @@ def check_fisa
     puts "Saved current state of FISC docket."
 
     if changed?
-      @git.add "fisa.html"
-      response = @git.commit "FISC docket has been updated"
-      sha = @git.gcommit(response.split(/[ \[\]]/)[2]).sha
-      puts "[#{sha}] Committed update"
+      begin
+        @git.add "fisa.html"
+        response = @git.commit "FISC docket has been updated"
+        sha = @git.gcommit(response.split(/[ \[\]]/)[2]).sha
+        puts "[#{sha}] Committed update"
 
-      @git.push
-      puts "[#{sha}] Pushed"
+        @git.push
+        puts "[#{sha}] Pushed"
 
-      sha
+        sha
+      rescue
+        puts "Error doing the git commit and push!"
+        puts "Emailing admin, notifying public without SHA."
+
+        Pony.mail(config['email'].merge(body: "Git error!")) if config['email']
+        Twilio::SMS.create(to: config['twilio']['to'], from: config['twilio']['from'], body: "Git error!") if config['twilio']
+
+        true
+      end
     else
       puts "Nothing changed."
       false
@@ -82,7 +92,7 @@ if sha = check_fisa
   short_msg = "Just updated with something!\n#{url}"
   long_msg = short_msg.dup
 
-  if config['github']
+  if config['github'] and sha.is_a?(String)
     diff_url = "https://github.com/#{config['github']}/commit/#{sha}"
     long_msg += "\n\nLine-by-line breakdown of what changed:\n#{diff_url}"
   end
