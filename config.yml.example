@@ -1,26 +1,26 @@
 # Uncomment and fill out this section to update Twitter
-twitter:
-  consumer_key:
-  consumer_secret:
-  oauth_token:
-  oauth_token_secret:
+# twitter:
+#   consumer_key:
+#   consumer_secret:
+#   oauth_token:
+#   oauth_token_secret:
 
 # Uncomment and fill out this section to send an email
-email:
-  :to: "Your Email <you@example.com>"
-  :subject: "FISA Court Updates"
-  :from: "FISA Updates <fisa@yourdomain.com>"
-  :via: :smtp
-  :via_options:
-    :address:
-    :port:
-    :user_name:
-    :password:
-    :enable_starttls_auto:
+# email:
+#   :to: "Your Email <you@example.com>"
+#   :subject: "FISA Court Updates"
+#   :from: "FISA Updates <fisa@yourdomain.com>"
+#   :via: :smtp
+#   :via_options:
+#     :address:
+#     :port:
+#     :user_name:
+#     :password:
+#     :enable_starttls_auto:
 
 # Uncomment and fill out this section to send an SMS
-twilio:
-  account_sid:
-  auth_token:
-  from: # registered Twilio phone number
-  to: # your number
+# twilio:
+#   account_sid:
+#   auth_token:
+#   from: # registered Twilio phone number
+#   to: # your number
