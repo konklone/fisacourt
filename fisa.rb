@@ -22,11 +22,13 @@ end
 FileUtils.mkdir_p "changes"
 FileUtils.mkdir_p "archive"
 
-Twitter.configure do |twitter|
-  twitter.consumer_key = config['twitter']['consumer_key']
-  twitter.consumer_secret = config['twitter']['consumer_secret']
-  twitter.oauth_token = config['twitter']['oauth_token']
-  twitter.oauth_token_secret = config['twitter']['oauth_token_secret']
+if config['twitter']
+  Twitter.configure do |twitter|
+    twitter.consumer_key = config['twitter']['consumer_key']
+    twitter.consumer_secret = config['twitter']['consumer_secret']
+    twitter.oauth_token = config['twitter']['oauth_token']
+    twitter.oauth_token_secret = config['twitter']['oauth_token_secret']
+  end
 end
 
 Twilio::Config.setup(
