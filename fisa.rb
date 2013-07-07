@@ -55,7 +55,9 @@ def check_fisa
         puts "[#{sha}] Committed update"
 
         if config['github']
-          # @git.pull "origin", config['github']['branch']
+          # @git.pull doesn't work
+          system "git pull -q origin #{config['github']['branch']}"
+
           @git.push "origin", config['github']['branch']
           puts "[#{sha}] Pushed to Github"
         end
