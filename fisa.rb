@@ -27,7 +27,7 @@ if config['twitter']
   end
 end
 
-if @config["twillo"]
+if config["twillo"]
   Twilio::Config.setup(
     account_sid: config['twilio']['account_sid'],
     auth_token: config['twilio']['auth_token']
@@ -43,11 +43,12 @@ def check_fisa
     end
 
     return false unless changed?
+
     @git.add "fisa.html"
     @git.commit "Automated update"
     @git.push
     true
-    
+
   end
 end
 
