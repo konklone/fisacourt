@@ -1,13 +1,16 @@
 #!/usr/bin/env ruby
 
 require 'rubygems'
+
 require 'yaml'
 require 'fileutils'
 require 'open-uri'
+require 'git'
+
+# communication mechanisms
 require 'twitter'
 require 'pony'
 require 'twilio-rb'
-require 'git'
 
 # change to current dir
 FileUtils.chdir File.dirname(__FILE__)
@@ -36,17 +39,25 @@ end
 
 # check FISA court for updates, compare to last check
 def check_fisa
+  puts "Downloading FISC docket..."
   open("http://www.uscourts.gov/uscourts/courts/fisc/index.html") do |uri|
     open("fisa.html", "wt") do |file|
       file.write uri.read
       file.close
     end
 
+    puts "Saved current state of FISC docket."
+
     if changed?
       @git.add "fisa.html"
-      @git.commit "Automated update"
+      response = @git.commit "FISC docket has been updated"
+      sha = @git.gcommit(response.split(/[ \[\]]/)[2]).sha
+      puts "[#{sha}] Committed update"
+
       @git.push
-      true
+      puts "[#{sha}] Pushed"
+
+      sha
     else
       puts "Nothing changed."
       false
@@ -59,6 +70,7 @@ def notify_fisa(msg)
   Twitter.update(msg) if config['twitter']
   Pony.mail(config['email'].merge(body: msg)) if config['email']
   Twilio::SMS.create(to: config['twilio']['to'], from: config['twilio']['from'], body: msg) if config['twilio']
+
   puts "Notified: #{msg}"
 end
 
@@ -66,6 +78,14 @@ def changed?
   @git.diff('HEAD','fisa.html').entries.length != 0
 end
 
-if check_fisa
-  notify_fisa "Just updated with something! http://www.uscourts.gov/uscourts/courts/fisc/index.html"
+if sha = check_fisa
+  url = "http://www.uscourts.gov/uscourts/courts/fisc/index.html"
+  msg = "Just updated with something! #{url}"
+
+  if config['github']
+    diff_url = "https://github.com/#{config['github']['repo']}/commit/#{sha}"
+    msg += " Here's a diff of what changed: #{diff_url}"
+  end
+
+  notify_fisa msg
 end
