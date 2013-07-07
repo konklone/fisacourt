@@ -1,4 +1,4 @@
-### Watching the Foreign Intelligence Surveillance Court 
+### Watching the Foreign Intelligence Surveillance Court
 
 This project "watches" the public docket of the FISC, and alerts the public and the administrator through tweets, emails, and texts upon any changes.
 
@@ -30,11 +30,23 @@ Once configured, run the script to update `fisa.html`.
 ruby fisa.rb
 ```
 
-If it's changed, the new fisa.html will be committed to git, and pushed (if there's anything to push to).
+If it's changed, the new `fisa.html` will be committed to git.
 
 #### GitHub integration
 
-If you fill out `config.yml`'s `github` field with `username/repo` (using your real username and repo name, e.g. `konklone/fisa`), then notification messages will include a URL to view the change on GitHub.
+If you fill out `config.yml`'s `github` field with `username/repo` (using your real username and repo name, e.g. `konklone/fisa`), then two things will happen:
+
+* Your commits will be pushed (using the actual repo configuration, not `config.yml`).
+* Notification messages will include a URL to view the change on GitHub, using the value in `config.yml`.
+
+For this to work, you will need the repo to be configured so that:
+
+* it is on a branch (e.g. master) that is at its HEAD (no un-pulled commits)
+* there is a remote branch already, and the local branch is set to track it
+
+If the `git push` fails for some reason, it will continue on and alert the world, but not include a Github URL. It will also send an error message via SMS and email to the admin, if they are configured.
+
+If the `git push` succeeds, but the remote branch is not configured correctly, it will post a Github URL to a non-existent commit (a 404). If the branch is then configured correctly and the commits pushed, the URL will then work as expected.
 
 #### Configuring alerts
 
@@ -96,3 +108,8 @@ To enable posting to Twitter, go to the [Twitter developer portal](https://dev.t
 Go to [My Applications](https://dev.twitter.com/apps) and create a new application. You will need to enter a name, description, and website. You do not need to supply a callback URL. Once created, go to the application's Settings tab and change the application's permissions from "Read only" to "Read and Write". Finally, create an access token using the form at the bottom. You may need to refresh the page after a minute to get the access token to show up.
 
 Copy the "Consumer key" and "Consumer secret" to the `consumer_key` and `consumer_secret` fields. Copy the "Access token" and "Access token secret" to the `oauth_token` and `oauth_token_secret` fields.
+
+### Todo
+
+* Have the repository automatically do a `git pull` before the commit and push
+* Possibly switch to shell-ing out to the command-line for git commands instead of the `git` gem, which exhibits strange and uninformative behavior when pushing and pulling

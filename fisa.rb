@@ -54,8 +54,10 @@ def check_fisa
         sha = @git.gcommit(response.split(/[ \[\]]/)[2]).sha
         puts "[#{sha}] Committed update"
 
-        @git.push
-        puts "[#{sha}] Pushed"
+        if config['github']
+          @git.push
+          puts "[#{sha}] Pushed to Github"
+        end
 
         sha
       rescue
