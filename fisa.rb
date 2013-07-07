@@ -70,7 +70,7 @@ def notify_fisa(long_msg, short_msg)
   Pony.mail(config['email'].merge(body: long_msg)) if config['email']
   Twilio::SMS.create(to: config['twilio']['to'], from: config['twilio']['from'], body: short_msg) if config['twilio']
 
-  puts "Notified: #{msg}"
+  puts "Notified: #{long_msg}"
 end
 
 def changed?
