@@ -40,12 +40,14 @@ def check_fisa
     open("fisa.html", "wt") do |file|
       file.write uri.read
       file.close
-      return false unless changed?
-      @git.add "fisa.html"
-      @git.commit "Automated update"
-      @git.push
-      true
     end
+
+    return false unless changed?
+    @git.add "fisa.html"
+    @git.commit "Automated update"
+    @git.push
+    true
+    
   end
 end
 
