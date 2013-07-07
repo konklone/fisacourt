@@ -55,7 +55,8 @@ def check_fisa
         puts "[#{sha}] Committed update"
 
         if config['github']
-          @git.push
+          # @git.pull "origin", config['github']['branch']
+          @git.push "origin", config['github']['branch']
           puts "[#{sha}] Pushed to Github"
         end
 
@@ -78,9 +79,11 @@ end
 
 # notify the admin and/or the world about it
 def notify_fisa(long_msg, short_msg)
-  Twitter.update(long_msg) if config['twitter']
-  Pony.mail(config['email'].merge(body: long_msg)) if config['email']
+
+  # do in order of importance, in case it blows up in the middle
   Twilio::SMS.create(to: config['twilio']['to'], from: config['twilio']['from'], body: short_msg) if config['twilio']
+  Pony.mail(config['email'].merge(body: long_msg)) if config['email']
+  Twitter.update(long_msg) if config['twitter']
 
   puts "Notified: #{long_msg}"
 end
@@ -95,7 +98,7 @@ if sha = check_fisa
   long_msg = short_msg.dup
 
   if config['github'] and sha.is_a?(String)
-    diff_url = "https://github.com/#{config['github']}/commit/#{sha}"
+    diff_url = "https://github.com/#{config['github']['repo']}/commit/#{sha}"
     long_msg += "\n\nLine-by-line breakdown of what changed:\n#{diff_url}"
   end
 

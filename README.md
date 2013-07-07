@@ -36,12 +36,14 @@ If it's changed, the new `fisa.html` will be committed to git.
 
 #### GitHub integration
 
-If you fill out `config.yml`'s `github` field with `username/repo` (using your real username and repo name, e.g. `konklone/fisa`), then two things will happen:
+To integrate with GitHub, fill out `config.yml`'s `github` section. Set `repo` to `username/repo` (using your real username and repo name, e.g. `konklone/fisa`), and `branch` to the branch you're working on (defaults to `master`).
+
+If you do, two things will happen:
 
 * Your commits will be pushed (using the actual repo configuration, not `config.yml`).
 * Notification messages will include a URL to view the change on GitHub, using the value in `config.yml`.
 
-For this to work, you will need the repo to be configured so that:
+For this to work, you will need the repo to be configured such that:
 
 * it is on a branch (e.g. master) that is at its HEAD (no un-pulled commits)
 * there is a remote branch already, and the local branch is set to track it

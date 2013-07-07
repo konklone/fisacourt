@@ -1,5 +1,7 @@
-# Uncomment and fill out as "username/repo" to post Github diff URLs
+# Uncomment and fill out to post Github diff URLs
 # github:
+#   repo: # username/repo
+#   branch: master
 
 # Uncomment and fill out this section to update Twitter
 # twitter:
