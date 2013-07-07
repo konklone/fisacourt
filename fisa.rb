@@ -56,7 +56,7 @@ def check_fisa
 
         if config['github']
           # @git.pull doesn't work
-          system "git pull -q origin #{config['github']['branch']}"
+          system "git pull -q --no-edit origin #{config['github']['branch']}"
 
           @git.push "origin", config['github']['branch']
           puts "[#{sha}] Pushed to Github"
