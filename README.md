@@ -1,4 +1,4 @@
-### Watching the Foreign Intelligence Surveillance Court
+### Watching the Foreign Intelligence Surveillance Court 
 
 This project "watches" the public docket of the FISC, and alerts the public and the administrator through tweets, emails, and texts upon any changes.
 
