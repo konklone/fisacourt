@@ -19,22 +19,24 @@ Since then, several other litigants (Microsoft, Google, and an unnamed "Provider
 Install dependencies:
 
 ```bash
-bundle install
+gem install git twitter pony twilio-rb
 ```
 
 Copy `config.yml.example` to `config.yml`, then uncomment and fill in any of the sections for `twitter`, `email`, and `twilio` (SMS) to enable those kinds of notifications. Details on enabling each of them are below.
 
-Once configured, run the script once to save the current state of the FISC docket (this won't send any alerts):
+Once configured, run the script to update `fisa.html`.
 
 ```bash
-bundle exec ruby fisa.rb
+ruby fisa.rb
 ```
 
-This will update `./fisa.html` and push it to GitHub, if changed.
+If it's changed, the new fisa.html will be committed to git, and pushed (if there's anything to push to).
 
-Any future executions of `fisa.rb` will check the current state of the FISC docket against the repository, and notify upon changes. If there are changes, you can view them by viewing the diff on GitHub.
+#### GitHub integration
 
-#### Configuring services
+If you fill out `config.yml`'s `github` field with `username/repo` (using your real username and repo name, e.g. `konklone/fisa`), then notification messages will include a URL to view the change on GitHub.
+
+#### Configuring alerts
 
 Turn on different alert methods by uncommenting and filling out sections of `config.yml`.
 
