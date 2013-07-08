@@ -94,7 +94,7 @@ def notify_fisa(long_msg, short_msg)
   Twilio::SMS.create(to: config['twilio']['to'], from: config['twilio']['from'], body: short_msg) if config['twilio']
   Pony.mail(config['email'].merge(body: long_msg)) if config['email']
   Twitter.update(long_msg) if config['twitter']
-  Pushover.notification(title: 'Update to FISA Court\'s Docket', message: long_msg, url: diff_url) if config['pushover']
+  Pushover.notification(title: short_msg, message: long_msg) if config['pushover']
 
   puts "Notified: #{long_msg}"
 end
