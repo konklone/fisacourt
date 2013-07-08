@@ -22,15 +22,15 @@ Install dependencies:
 gem install git twitter pony twilio-rb
 ```
 
-Copy `config.yml.example` to `config.yml`, then uncomment and fill in any of the sections for `twitter`, `email`, and `twilio` (SMS) to enable those kinds of notifications. Details on enabling each of them are below.
+Copy `config.yml.example` to `config.yml`, then uncomment and fill in any of the sections for `twitter`, `email`, and `twilio` (SMS) to enable those kinds of notifications. They're all optional. Details on enabling each of them are below.
 
-Once configured, run the script to update `fisa.html`.
+Once configured, run the script to check the FISC website and update `fisa.html`.
 
 ```bash
 ruby fisa.rb
 ```
 
-If it's changed, the new `fisa.html` will be committed to git.
+If the site's changed, the new `fisa.html` will be committed to git, and any alert mechanisms you've configured will fire.
 
 #### GitHub integration
 
