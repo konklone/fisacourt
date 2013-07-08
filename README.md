@@ -45,7 +45,7 @@ If you do, two things will happen:
 
 For this to work, you will need the repo to be configured such that:
 
-* it is on a branch (e.g. master) that is at its HEAD (no un-pulled commits)
+* if a `git pull` is run, it will not generate a merge conflict (at HEAD, or can be fast-forwarded)
 * there is a remote branch already, and the local branch is set to track it
 
 If the `git push` fails for some reason, it will continue on and alert the world, but not include a Github URL. It will also send an error message via SMS and email to the admin, if they are configured.
@@ -115,5 +115,4 @@ Copy the "Consumer key" and "Consumer secret" to the `consumer_key` and `consume
 
 ### Todo
 
-* Have the repository automatically do a `git pull` before the commit and push
-* Possibly switch to shell-ing out to the command-line for git commands instead of the `git` gem, which exhibits strange and uninformative behavior when pushing and pulling
+* Possibly switch to shell-ing out to the command-line for other git commands instead of the `git` gem, which exhibits strange and uninformative behavior when pushing and pulling
