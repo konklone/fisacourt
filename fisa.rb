@@ -10,6 +10,7 @@ require 'git'
 require 'twitter'
 require 'pony'
 require 'twilio-rb'
+require 'pushover'
 
 # change to current dir
 FileUtils.chdir File.dirname(__FILE__)
@@ -34,6 +35,13 @@ if config['twilio']
     account_sid: config['twilio']['account_sid'],
     auth_token: config['twilio']['auth_token']
   )
+end
+
+if config['pushover']
+  Pushover.configure do |pushover|
+    pushover.user = config['pushover']['user_key']
+    pushover.token = config['pushover']['app_key']
+  end
 end
 
 # check FISA court for updates, compare to last check
@@ -86,6 +94,7 @@ def notify_fisa(long_msg, short_msg)
   Twilio::SMS.create(to: config['twilio']['to'], from: config['twilio']['from'], body: short_msg) if config['twilio']
   Pony.mail(config['email'].merge(body: long_msg)) if config['email']
   Twitter.update(long_msg) if config['twitter']
+  Pushover.notification(title: 'Update to FISA Court\'s Docket', message: long_msg, url: diff_url) if config['pushover']
 
   puts "Notified: #{long_msg}"
 end

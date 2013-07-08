@@ -112,6 +112,20 @@ Go to [My Applications](https://dev.twitter.com/apps) and create a new applicati
 
 Copy the "Consumer key" and "Consumer secret" to the `consumer_key` and `consumer_secret` fields. Copy the "Access token" and "Access token secret" to the `oauth_token` and `oauth_token_secret` fields.
 
+**Pushover**
+
+[Pushover](https://pushover.net/) provides an advanced notification system for Android and iOS. The script can send updates to any of your Pushover devices. As with Twitter, you will need to tell Pushover about your application, but there will not be any delay after registering your applications which are also automatically approved.
+
+```yaml
+pushover:
+  user_key:
+  app_key:
+```
+
+To enable Pushover notifications, go to the [Pushover Dashboard](https://pushover.net/), and log in. The dashboard will show your `user_key`.
+
+After that register a new application from the [New Application Page](https://pushover.net/apps/build) by entering the name and brief description of the application. Then you copy the `app_key` field when the registration is complete.
+
 ### Todo
 
 * Possibly switch to shell-ing out to the command-line for other git commands instead of the `git` gem, which exhibits strange and uninformative behavior when pushing and pulling
