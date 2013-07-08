@@ -116,3 +116,4 @@ Copy the "Consumer key" and "Consumer secret" to the `consumer_key` and `consume
 ### Todo
 
 * Possibly switch to shell-ing out to the command-line for other git commands instead of the `git` gem, which exhibits strange and uninformative behavior when pushing and pulling
+* Allow multiple recipients of SMS and email messages (but mark one as 'admin' for errors)
