@@ -40,8 +40,9 @@ To integrate with GitHub, fill out `config.yml`'s `github` section. Set `repo` t
 
 If you do, two things will happen:
 
-* Your commits will be pushed (using the actual repo configuration, not `config.yml`).
-* Notification messages will include a URL to view the change on GitHub, using the value in `config.yml`.
+* A `git pull` will be run, from the branch in `config.yml`.
+* Your commits will be pushed, to the branch in `config.yml`.
+* Notification messages will include a URL to view the change on GitHub, using the repo in `config.yml`.
 
 For this to work, you will need the repo to be configured such that:
 
