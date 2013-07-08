@@ -16,9 +16,7 @@ Since then, several other litigants (Microsoft, Google, and an unnamed "Provider
 
 #### Setup and Usage
 
-Make sure `git` is installed on your system.
-
-Then, install dependencies:
+Install dependencies:
 
 ```bash
 gem install git twitter pony twilio-rb
