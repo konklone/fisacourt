@@ -39,7 +39,7 @@ end
 # check FISA court for updates, compare to last check
 def check_fisa
   puts "Downloading FISC docket..."
-  open("http://www.uscourts.gov/uscourts/courts/fisc/index.html") do |uri|
+  open("http://www.uscourts.gov/uscourts/courts/fisc/index.html?t=#{Time.now.to_i}") do |uri|
     open("fisa.html", "wt") do |file|
       file.write uri.read
       file.close
