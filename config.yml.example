@@ -29,3 +29,8 @@
 #   auth_token:
 #   from: # registered Twilio phone number
 #   to: # your number
+
+# Uncomment and fill out this section to receive Pushover Notifications
+# pushover:
+#   user_key:
+#   app_key:

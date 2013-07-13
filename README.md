@@ -19,7 +19,7 @@ Since then, several other litigants (Microsoft, Google, and an unnamed "Provider
 Install dependencies:
 
 ```bash
-gem install git twitter pony twilio-rb
+gem install git twitter pony twilio-rb pushover
 ```
 
 Copy `config.yml.example` to `config.yml`, then uncomment and fill in any of the sections for `twitter`, `email`, and `twilio` (SMS) to enable those kinds of notifications. They're all optional. Details on enabling each of them are below.
@@ -92,6 +92,20 @@ To enable posting to Twitter, go to the [Twitter developer portal](https://dev.t
 Go to [My Applications](https://dev.twitter.com/apps) and create a new application. You will need to enter a name, description, and website. You do not need to supply a callback URL. Once created, go to the application's Settings tab and change the application's permissions from "Read only" to "Read and Write". Finally, create an access token using the form at the bottom. You may need to refresh the page after a minute to get the access token to show up.
 
 Copy the "Consumer key" and "Consumer secret" to the `consumer_key` and `consumer_secret` fields. Copy the "Access token" and "Access token secret" to the `oauth_token` and `oauth_token_secret` fields.
+
+**Pushover**
+
+[Pushover](https://pushover.net/) provides an advanced notification system for Android and iOS. The script can send updates to any of your Pushover devices. As with Twitter, you will need to tell Pushover about your application, but there will not be any delay after registering your applications which are also automatically approved.
+
+```yaml
+pushover:
+  user_key:
+  app_key:
+```
+
+To enable Pushover notifications, go to the [Pushover Dashboard](https://pushover.net/), and log in. The dashboard will show your `user_key`.
+
+After that register a new application from the [New Application Page](https://pushover.net/apps/build) by entering the name and brief description of the application. Then you copy the `app_key` field when the registration is complete.
 
 #### GitHub integration
 
