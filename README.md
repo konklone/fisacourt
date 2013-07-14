@@ -42,7 +42,7 @@ To test out your alerts without requiring the FISA Court to actually update or `
 
 This will pretend a change was made and fire each of your alert mechanisms.
 
-#### Git integration
+#### Git
 
 This project depends on its own git repository to detect and track changes. For git interaction to work correctly, you need to ensure:
 
@@ -51,9 +51,9 @@ This project depends on its own git repository to detect and track changes. For 
 
 This will generally already be the case for a clean checkout running on the master branch.
 
-If the `git push` fails for some reason, it will continue on and alert the world, but not include a Github URL. It will also send an error message via SMS and email to the admin, if they are configured.
+If the `git push` fails for some reason, it will continue on and alert the world (though it will not include a GitHub URL). It will also send an alert via Pushover, SMS, and email to the admin, if any of those are configured.
 
-If the `git push` succeeds, but the remote branch is not configured correctly, it will post a Github URL to a non-existent commit (a 404). If the branch is then configured correctly and the commits pushed, the URL will then work as expected.
+If the `git push` succeeds, but the remote branch is not configured correctly, it will post a GitHub URL to a non-existent commit (a 404). If the branch is then configured correctly and the commits pushed, the URL will then work as expected.
 
 #### GitHub integration
 
