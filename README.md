@@ -27,7 +27,7 @@ Copy `config.yml.example` to `config.yml`, then uncomment and fill in any of the
 Once configured, run the script to check the FISC website and update `fisa.html`.
 
 ```bash
-ruby fisa.rb
+./fisa.rb
 ```
 
 If the site's changed, the new `fisa.html` will be committed to git, and any alert mechanisms you've configured will fire.
