@@ -1,2 +1,4 @@
 /config.yml
+/config.yml.real
+/config.yml.test
 /*.log
