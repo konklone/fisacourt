@@ -79,8 +79,10 @@ def check_fisa(test: false)
         puts "Error doing the git commit and push!"
         puts "Emailing admin, notifying public without SHA."
 
-        Pony.mail(config['email'].merge(body: "Git error!")) if config['email']
-        Twilio::SMS.create(to: config['twilio']['to'], from: config['twilio']['from'], body: "Git error!") if config['twilio']
+        msg = "Git error!"
+        Pony.mail(config['email'].merge(body: msg)) if config['email']
+        Twilio::SMS.create(to: config['twilio']['to'], from: config['twilio']['from'], body: msg) if config['twilio']
+        Pushover.notification(title: msg, message: msg) if config['pushover']
 
         true
       end
