@@ -12,7 +12,6 @@ require 'pony'
 require 'twilio-rb'
 require 'pushover'
 
-# change to current dir
 FileUtils.chdir File.dirname(__FILE__)
 
 @git = Git.open './'
@@ -45,7 +44,9 @@ if config['pushover']
 end
 
 # check FISA court for updates, compare to last check
-def check_fisa
+def check_fisa(test: false)
+  return "test" if test
+
   puts "Downloading FISC docket..."
   open(
     "http://www.uscourts.gov/uscourts/courts/fisc/index.html?t=#{Time.now.to_i}",
@@ -106,7 +107,7 @@ def changed?
   @git.diff('HEAD','fisa.html').entries.length != 0
 end
 
-if sha = check_fisa
+if sha = check_fisa(test: (ARGV[0] == "test"))
   url = "http://www.uscourts.gov/uscourts/courts/fisc/index.html"
   short_msg = "Just updated with something!\n#{url}"
   long_msg = short_msg.dup
