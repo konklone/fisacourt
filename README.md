@@ -95,7 +95,9 @@ Copy the "Consumer key" and "Consumer secret" to the `consumer_key` and `consume
 
 **Pushover**
 
-[Pushover](https://pushover.net/) provides an advanced notification system for Android and iOS. The script can send updates to any of your Pushover devices. As with Twitter, you will need to tell Pushover about your application, but there will not be any delay after registering your applications which are also automatically approved.
+[Pushover](https://pushover.net/) provides basic push notifications for any device with the Pushover application installed ([Android](https://pushover.net/clients/android), [iOS](https://pushover.net/clients/ios)). The application costs $5, but messages are free (up to 7,500 per month), so Pushover may be a better choice than SMS if SMS is expensive or unavailable in your area.
+
+You will need to tell Pushover about your application, but applications are automatically approved at this time.
 
 ```yaml
 pushover:
@@ -103,9 +105,17 @@ pushover:
   app_key:
 ```
 
-To enable Pushover notifications, go to the [Pushover Dashboard](https://pushover.net/), and log in. The dashboard will show your `user_key`.
+To configure Pushover notifications:
 
-After that register a new application from the [New Application Page](https://pushover.net/apps/build) by entering the name and brief description of the application. Then you copy the `app_key` field when the registration is complete.
+* Go to the [Pushover Dashboard](https://pushover.net), create an account if needed, and log in. The dashboard will show your `user_key` underneath "Your User Key". Copy this into `config.yml`.
+* Register a new application from the [New Application Page](https://pushover.net/apps/build) by entering the name and brief description of the application.
+* This will bring you to your new application's detail screen. Copy the `app_key` field, underneath "API Token/Key", into `config.yml`.
+
+And to enable them on your phone:
+
+* Install the Pushover application. ([Android](https://pushover.net/clients/android), [iOS](https://pushover.net/clients/ios))
+* Log into your Pushover account.
+* Give your device a name and "add" it to Pushover.
 
 #### GitHub integration
 
