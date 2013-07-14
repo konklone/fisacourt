@@ -44,7 +44,7 @@ if config['pushover']
 end
 
 # check FISA court for updates, compare to last check
-def check_fisa(test: false)
+def check_fisa(test: false, test_error: false)
   return "test" if test
 
   puts "Downloading FISC docket..."
@@ -59,7 +59,7 @@ def check_fisa(test: false)
 
     puts "Saved current state of FISC docket."
 
-    if changed?
+    if changed? or test_error
       begin
         @git.add "fisa.html"
         response = @git.commit "FISC docket has been updated"
@@ -73,6 +73,8 @@ def check_fisa(test: false)
           @git.push "origin", config['github']['branch']
           puts "[#{sha}] Pushed to Github"
         end
+
+        raise Exception.new("Fake git error!") if test_error
 
         sha
       rescue
@@ -109,7 +111,7 @@ def changed?
   @git.diff('HEAD','fisa.html').entries.length != 0
 end
 
-if sha = check_fisa(test: (ARGV[0] == "test"))
+if sha = check_fisa(test: (ARGV[0] == "test"), test_error: (ARGV[0] == "test_error"))
   url = "http://www.uscourts.gov/uscourts/courts/fisc/index.html"
   short_msg = "Just updated with something!\n#{url}"
   long_msg = short_msg.dup
