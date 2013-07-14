@@ -47,6 +47,9 @@ end
 def check_fisa(test: false, test_error: false)
   return "test" if test
 
+  puts "Pulling latest changes..."
+  system "git pull --no-edit" # make sure local branch is tracking a remote!
+
   puts "Downloading FISC docket..."
   open(
     "http://www.uscourts.gov/uscourts/courts/fisc/index.html?t=#{Time.now.to_i}",
@@ -66,20 +69,17 @@ def check_fisa(test: false, test_error: false)
         sha = @git.gcommit(response.split(/[ \[\]]/)[2]).sha
         puts "[#{sha}] Committed update"
 
-        if config['github']
-          # @git.pull doesn't work
-          system "git pull -q --no-edit origin #{config['github']['branch']}"
-
-          @git.push "origin", config['github']['branch']
-          puts "[#{sha}] Pushed to Github"
-        end
+        system "git push"
+        puts "[#{sha}] Pushed changes."
 
         raise Exception.new("Fake git error!") if test_error
 
         sha
-      rescue
+      rescue Exception => ex
         puts "Error doing the git commit and push!"
         puts "Emailing admin, notifying public without SHA."
+        puts
+        puts ex.inspect
 
         msg = "Git error!"
         Pony.mail(config['email'].merge(body: msg)) if config['email']
@@ -117,7 +117,7 @@ if sha = check_fisa(test: (ARGV[0] == "test"), test_error: (ARGV[0] == "test_err
   long_msg = short_msg.dup
 
   if config['github'] and sha.is_a?(String)
-    diff_url = "https://github.com/#{config['github']['repo']}/commit/#{sha}"
+    diff_url = "https://github.com/#{config['github']}/commit/#{sha}"
     long_msg += "\n\nLine-by-line breakdown of what changed:\n#{diff_url}"
   end
 

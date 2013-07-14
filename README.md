@@ -32,6 +32,25 @@ ruby fisa.rb
 
 If the site's changed, the new `fisa.html` will be committed to git, and any alert mechanisms you've configured will fire.
 
+#### Git integration
+
+This project depends on its own git repository to detect and track changes. For git interaction to work correctly, you need to ensure:
+
+* if a `git pull` is run, it will not generate a merge conflict (at HEAD, or can be fast-forwarded)
+* there is a remote branch already, and the local branch is set to track it
+
+This will generally already be the case for a clean checkout running on the master branch.
+
+If the `git push` fails for some reason, it will continue on and alert the world, but not include a Github URL. It will also send an error message via SMS and email to the admin, if they are configured.
+
+If the `git push` succeeds, but the remote branch is not configured correctly, it will post a Github URL to a non-existent commit (a 404). If the branch is then configured correctly and the commits pushed, the URL will then work as expected.
+
+#### GitHub integration
+
+If you're using GitHub, then when FISC updates are detected you can have notification messages include a URL to view the change on GitHub.
+
+To do this, set `config.yml`'s `github` value to `username/repo` (using your real username and repo name, e.g. `konklone/fisa`).
+
 #### Configuring alerts
 
 Turn on different alert methods by uncommenting and filling out sections of `config.yml`.
@@ -117,26 +136,7 @@ And to enable them on your phone:
 * Log into your Pushover account.
 * Give your device a name and "add" it to Pushover.
 
-#### GitHub integration
-
-To integrate with GitHub, fill out `config.yml`'s `github` section. Set `repo` to `username/repo` (using your real username and repo name, e.g. `konklone/fisa`), and `branch` to the branch you're working on (defaults to `master`).
-
-If you do, two things will happen when FISC updates are detected:
-
-* A `git pull` will be run, from the branch in `config.yml`.
-* Your commits will be pushed, to the branch in `config.yml`.
-* Notification messages will include a URL to view the change on GitHub, using the repo in `config.yml`.
-
-For this to work, you will need the repo to be configured such that:
-
-* if a `git pull` is run, it will not generate a merge conflict (at HEAD, or can be fast-forwarded)
-* there is a remote branch already, and the local branch is set to track it
-
-If the `git push` fails for some reason, it will continue on and alert the world, but not include a Github URL. It will also send an error message via SMS and email to the admin, if they are configured.
-
-If the `git push` succeeds, but the remote branch is not configured correctly, it will post a Github URL to a non-existent commit (a 404). If the branch is then configured correctly and the commits pushed, the URL will then work as expected.
-
 ### Todo
 
-* Possibly switch to shell-ing out to the command-line for other git commands instead of the `git` gem, which exhibits strange and uninformative behavior when pushing and pulling
 * Allow multiple recipients of SMS and email messages (but mark one as 'admin' for errors)
+* Add support for writing an RSS feed to disk
