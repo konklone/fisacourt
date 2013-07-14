@@ -32,7 +32,7 @@ Once configured, run the script to check the FISC website and update `fisa.html`
 
 If the site's changed, the new `fisa.html` will be committed to git, and any alert mechanisms you've configured will fire.
 
-**Testing it out**
+**Testing alerts**
 
 To test out your alerts without requiring the FISA Court to actually update or `fisa.html` to change, run:
 
