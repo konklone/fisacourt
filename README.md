@@ -32,6 +32,16 @@ Once configured, run the script to check the FISC website and update `fisa.html`
 
 If the site's changed, the new `fisa.html` will be committed to git, and any alert mechanisms you've configured will fire.
 
+**Testing it out**
+
+To test out your alerts without requiring the FISA Court to actually update or `fisa.html` to change, run:
+
+```bash
+./fisa.rb test
+```
+
+This will pretend a change was made and fire each of your alert mechanisms.
+
 #### Git integration
 
 This project depends on its own git repository to detect and track changes. For git interaction to work correctly, you need to ensure:
