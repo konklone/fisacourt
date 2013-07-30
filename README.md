@@ -2,6 +2,10 @@
 
 This project "watches" the public docket of the FISC, and alerts the public and the administrator through tweets, emails, and texts upon any changes.
 
+More specifically, it is a small script of Ruby code that, when run, downloads the FISC's public docket and compares it against the last time it was run. If there are changes, any configured alert mechanisms (such as SMS or Twitter) will fire.
+
+To use it, you should have a computer available that can automatically run the script every few minutes, all day throughout the day.
+
 #### Background
 
 The [Foreign Intelligence Surveillance Court](https://en.wikipedia.org/wiki/United_States_Foreign_Intelligence_Surveillance_Court) (FISC) is responsible, under the law known as [FISA](https://en.wikipedia.org/wiki/Foreign_Intelligence_Surveillance_Act), for overseeing the surveillance activity of the US executive branch.
