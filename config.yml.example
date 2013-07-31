@@ -32,3 +32,6 @@
 # pushover:
 #   user_key:
 #   app_key:
+
+# Uncomment this if you would like to download the PDFs
+# pdf_download: files
