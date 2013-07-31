@@ -4,6 +4,7 @@ require 'rubygems'
 require 'yaml'
 require 'fileutils'
 require 'open-uri'
+require 'rss'
 
 # install these gems:
 require 'git'
@@ -95,14 +96,40 @@ def check_fisa(test: false, test_error: false)
   end
 end
 
+def notify_rss(short_msg, diff_url)
+  RSS::Maker.add_maker("atom", "1.0", RSS::Maker::Atom::Feed)
+  RSS::Maker.add_maker("rss10", "1.0", RSS::Maker::RSS10::Channel)
+  RSS::Maker.add_maker("rss20", "2.0", RSS::Maker::RSS20::Channel)
+  output_file = config['rss']['output_file']
+  about = "http://raw.github.com/#{config['github']}/#{config['rss']['output_file']}"
+
+  rss_feed = RSS::Maker.make(config['rss']['feed_type']) do |maker|
+    maker.channel.author = config['rss']['author']
+    maker.channel.updated = Time.now.to_s
+    maker.channel.title = "FISA Court Updates"
+    maker.channel.about = about
+    maker.items.new_item do |item|
+      item.link = diff_url
+      item.title = short_msg
+      item.updated = Time.now.to_s
+    end
+  end
+
+  File.open( output_file, 'w+' ){|f| f.write( rss_feed ); f.close }
+end
+
 # notify the admin and/or the world about it
-def notify_fisa(long_msg, short_msg)
+def notify_fisa(long_msg, short_msg, diff_url)
 
   # do in order of importance, in case it blows up in the middle
   Twilio::SMS.create(to: config['twilio']['to'], from: config['twilio']['from'], body: short_msg) if config['twilio']
   Pony.mail(config['email'].merge(body: long_msg)) if config['email']
   Twitter.update(long_msg) if config['twitter']
-  Pushover.notification(title: short_msg, message: long_msg) if config['pushover']
+  Pushover.notification(title: short_msg, message: long_msg, url: diff_url) if config['pushover']
+  # probably best to require github for the rss as to simplify instructions for
+  # non-technical users; technical users can easily change if they want to feed
+  # the rss behind their own server as it is a soft requirement.
+  notify_rss(short_msg, diff_url) if config['rss'] #&& config['github']
 
   puts "Notified: #{long_msg}"
 end
@@ -121,5 +148,5 @@ if sha = check_fisa(test: (ARGV[0] == "test"), test_error: (ARGV[0] == "test_err
     long_msg += "\n\nLine-by-line breakdown of what changed:\n#{diff_url}"
   end
 
-  notify_fisa long_msg, short_msg
+  notify_fisa long_msg, short_msg, diff_url
 end

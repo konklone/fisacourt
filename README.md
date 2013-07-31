@@ -128,7 +128,7 @@ Copy the "Consumer key" and "Consumer secret" to the `consumer_key` and `consume
 
 **Pushover**
 
-[Pushover](https://pushover.net/) provides basic push notifications for any device with the Pushover application installed ([Android](https://pushover.net/clients/android), [iOS](https://pushover.net/clients/ios)). The application costs $5, but messages are free (up to 7,500 per month), so Pushover may be a better choice than SMS if SMS is expensive or unavailable in your area.
+[Pushover](https://pushover.net/) provides basic push notifications for any device with the Pushover application installed ([Android](https://pushover.net/clients/android), [iOS](https://pushover.net/clients/ios)). The application costs $5 (for iOS) or $4 (for Android), but messages are free (up to 7,500 per month), so Pushover may be a better choice than SMS if SMS is expensive or unavailable in your area.
 
 You will need to tell Pushover about your application, but applications are automatically approved at this time.
 
@@ -150,7 +150,25 @@ And to enable them on your phone:
 * Log into your Pushover account.
 * Give your device a name and "add" it to Pushover.
 
+
+**RSS Feed**
+
+The script can create an RSS feed for you to use the feed reader of your choice for updates. In order for RSS feed to work, you will need to utilize the Github option described above. Then you can point your RSS feed reader to the `fisa.xml` file from your Github repository.
+
+```yaml
+rss:
+  author:
+  feed_type: #atom #rss20 #rss10
+  output_file: fisa.xml
+```
+
+To use the RSS option, uncomment the lines in your config.yml in the RSS section. Add your name in the author field, and select *one* of the three feed option types. If you prefer a different file name then the default file, you can change the file name as long as it ends in xml there should be no problem for your feed reader to utilize.
+
+If you want to use Feedburner or another feed provider rather than pointing your RSS feed reader directly to the `rss.xml` file then you can subscribe to the Feedburner link which you set up. If you were going to use RSS directly to your feed reader, the URL in the example is the address you would use for your feed reader.
+
+*Example*: To use Feedburner and your Github then you would go to your Feedburner [home page](http://feedburner.google.com/fb/a/myfeeds) and in the form titled: Burn a feed right this instant, you would put in the following: `https://raw.github.com/USERNAME/fisa/master/fisa.xml` where USERNAME is your Github user name. If you changed the default file name in your config.yml then you would change the last part of the URL above to match the file name you entered in your config.yml.
+
+
 ### Todo
 
 * Allow multiple recipients of SMS and email messages (but mark one as 'admin' for errors)
-* Add support for writing an RSS feed to disk
