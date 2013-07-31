@@ -2,3 +2,5 @@
 /config.yml.real
 /config.yml.test
 /*.log
+.bundle
+vendor/bundle

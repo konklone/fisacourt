@@ -23,7 +23,7 @@ Since then, several other litigants (Microsoft, Google, and an unnamed "Provider
 Install dependencies:
 
 ```bash
-gem install git twitter pony twilio-rb pushover
+bundle install
 ```
 
 Copy `config.yml.example` to `config.yml`, then uncomment and fill in any of the sections for `twitter`, `email`, and `twilio` (SMS) to enable those kinds of notifications. They're all optional. Details on enabling each of them are below.
