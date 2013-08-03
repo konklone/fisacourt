@@ -32,3 +32,10 @@
 # pushover:
 #   user_key:
 #   app_key:
+
+# Uncomment and fill out this section to build an RSS feed.
+# rss:
+#   author:      'your name'
+#   feed_type:   #atom #rss20 #rss10
+#   output_file: fisa.xml
+#   site_url:    http://example.com/fisa

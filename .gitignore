@@ -2,3 +2,4 @@
 /config.yml.real
 /config.yml.test
 /*.log
+/*.xml

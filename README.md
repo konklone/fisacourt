@@ -128,7 +128,7 @@ Copy the "Consumer key" and "Consumer secret" to the `consumer_key` and `consume
 
 **Pushover**
 
-[Pushover](https://pushover.net/) provides basic push notifications for any device with the Pushover application installed ([Android](https://pushover.net/clients/android), [iOS](https://pushover.net/clients/ios)). The application costs $5, but messages are free (up to 7,500 per month), so Pushover may be a better choice than SMS if SMS is expensive or unavailable in your area.
+[Pushover](https://pushover.net/) provides basic push notifications for any device with the Pushover application installed ([Android](https://pushover.net/clients/android), [iOS](https://pushover.net/clients/ios)). The application costs $5 (for iOS) or $4 (for Android), but messages are free (up to 7,500 per month), so Pushover may be a better choice than SMS if SMS is expensive or unavailable in your area.
 
 You will need to tell Pushover about your application, but applications are automatically approved at this time.
 
@@ -150,7 +150,39 @@ And to enable them on your phone:
 * Log into your Pushover account.
 * Give your device a name and "add" it to Pushover.
 
+
+**RSS Feed**
+
+The script can create an RSS feed for you to use the feed reader of your choice for updates. In order for RSS feed to work, you will need to have the script running on a server which can serve a file to the internet. Then you can point your RSS feed reader to the xml file on your server.
+
+*Note*. If you would like to have an RSS feed and you already are planning to use the Github option, the easiest way to get an RSS feed of the changes would be to subscribe to the changes feed for your Github repository which is already provided by Github. The RSS feed for commits to a Github repository is: http://github.com/USERNAME/REPONAME/commits.atom. If you enter that address with your Github user name and the name of your repository into your RSS reader, you can keep up to date with the changes without having to perform any additional set up.
+
+If you would like to create your own RSS Feed because you are not using Github or for another reason, you will need to double check that you can meet the following requirements:
+
+* You have a server with access to the internet.
+* You have web server software (such as Apache or Nginx) that can serve files to the internet.
+* You can run ruby on the server.
+* You can run git on the server.
+* You have a URL available which you are able to map to the web server software.
+
+```yaml
+rss:
+  author:
+  feed_type:   #atom #rss20 #rss10
+  output_file: fisa.xml
+  site_url:    http://example.com/fisa
+```
+
+To use the RSS option, uncomment the lines in your config.yml in the RSS section. Add your name, or your organization's name, in the author field, and select *one* of the three feed option types. If you prefer a different file name then the default file, you can change the file name as long as it ends in xml there should be no problem for your feed reader to utilize.
+
+Lastly, you need to fill in your server's address. What you fill in here will determine how your web server is set up.
+
+If you already are running a site on the server, you could set the script up to run in one of the directories (usually, but not always, in the www-data directory) which the web server software already maps to a particular URL. Although this is the easy option, it is not preferable. If you were to set this up, you will need to double check that when the primary software in the directory conducts an update, that it will not overwrite or delete the directory which you put the script in. To serve the script in this way, it would be best to create a unique directory somewhere in the file structure under the main directory for your site which makes sense given your set up. The URL you add to the config.yml will then be the hostname for your base site plus any directories you build.
+
+A better, although slightly more complicated option, is to create a unique directory outside of your current site's directory. Usually you would create a new directory under the www-data directory. The script would run from this directory. Then you would need to create a new vhost in your server's configuration files which maps the directory you just created to either a subfolder or subdomain of your site. This method is highly recommended as it will not cause conflicts or permission problems with the other software which you are currently running for the domain. The URL you add to the config.yml will then be the hostname for your base site plus the subdirectory or subdomain which you put into the vhost.
+
+If you want to use Feedburner or another feed provider rather than pointing your RSS feed reader directly to the `fisa.xml` file then you can enter the site_url and the `fisa.xml` into Feedburner or other feed provider's system. Most feed providers will require you to enter both the site_url as well as the xml file into the system. Using the above as an example, you would enter http://example.com/fisa/fisa.xml into the feed provider's form. If you were not going to use a feed provider as an intermediary, then you would simply the full URL into your feed reader.
+
 ### Todo
 
 * Allow multiple recipients of SMS and email messages (but mark one as 'admin' for errors)
-* Add support for writing an RSS feed to disk

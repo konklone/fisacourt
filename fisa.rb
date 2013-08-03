@@ -4,6 +4,7 @@ require 'rubygems'
 require 'yaml'
 require 'fileutils'
 require 'open-uri'
+require 'rss'
 
 # install these gems:
 require 'git'
@@ -95,14 +96,55 @@ def check_fisa(test: false, test_error: false)
   end
 end
 
+def notify_rss(short_msg, long_msg, *diff_url)
+  format = config['rss']['feed_type']
+  output_file = config['rss']['output_file']
+  site_url = config['rss']['site_url']
+  about = "#{site_url}/#{output_file}"
+  diff_url.empty? ? diff_url = "#{site_url}/fisa.html" : diff_url = diff_url.first
+
+  case format
+  when 'atom'
+    RSS::Maker.add_maker("atom", "1.0", RSS::Maker::Atom::Feed)
+  when 'rss10'
+    RSS::Maker.add_maker("rss10", "1.0", RSS::Maker::RSS10::Channel)
+  when 'rss20'
+    RSS::Maker.add_maker("rss20", "2.0", RSS::Maker::RSS20::Channel)
+  else
+    return
+  end
+
+  rss_feed = RSS::Maker.make(format) do |maker|
+    maker.channel.author = config['rss']['author']
+    maker.channel.updated = Time.now.to_s
+    maker.channel.title = "FISA Court Updates"
+    maker.channel.about = about
+    maker.items.new_item do |item|
+      item.link = diff_url
+      item.title = short_msg
+      item.updated = Time.now.to_s
+      item.summary = long_msg
+    end
+  end
+
+  File.open( output_file, 'w+' ){|f| f.write( rss_feed ); f.close }
+end
+
 # notify the admin and/or the world about it
-def notify_fisa(long_msg, short_msg)
+def notify_fisa(long_msg, short_msg, diff_url)
 
   # do in order of importance, in case it blows up in the middle
   Twilio::SMS.create(to: config['twilio']['to'], from: config['twilio']['from'], body: short_msg) if config['twilio']
   Pony.mail(config['email'].merge(body: long_msg)) if config['email']
   Twitter.update(long_msg) if config['twitter']
-  Pushover.notification(title: short_msg, message: long_msg) if config['pushover']
+
+  if diff_url
+    Pushover.notification(title: short_msg, message: long_msg, url: diff_url) if config['pushover']
+    notify_rss(short_msg, long_msg, diff_url) if config['rss']
+  else
+    Pushover.notification(title: short_msg, message: long_msg) if config['pushover']
+    notify_rss(short_msg, long_msg) if config['rss']
+  end
 
   puts "Notified: #{long_msg}"
 end
@@ -115,11 +157,12 @@ if sha = check_fisa(test: (ARGV[0] == "test"), test_error: (ARGV[0] == "test_err
   url = "http://www.uscourts.gov/uscourts/courts/fisc/index.html"
   short_msg = "Just updated with something!\n#{url}"
   long_msg = short_msg.dup
+  diff_url = false
 
   if config['github'] and sha.is_a?(String)
     diff_url = "https://github.com/#{config['github']}/commit/#{sha}"
     long_msg += "\n\nLine-by-line breakdown of what changed:\n#{diff_url}"
   end
 
-  notify_fisa long_msg, short_msg
+  notify_fisa long_msg, short_msg, diff_url
 end
