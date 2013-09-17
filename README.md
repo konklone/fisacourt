@@ -16,7 +16,7 @@ To publish these, the FISC now operates a minimalist public docket that lists li
 
 > [http://www.uscourts.gov/uscourts/courts/fisc/index.html](http://www.uscourts.gov/uscourts/courts/fisc/index.html)
 
-Since then, several other litigants (Microsoft, Google, and an unnamed "Provider") have filed their own public outstanding motions with FISC. It is expected that future FISC public records will appear at this page.
+Since then, several other litigants (Microsoft, Google, Yahoo, and Facebook) have filed their own public outstanding motions with FISC. It is expected that future FISC public records will appear at this page.
 
 #### Setup and Usage
 
