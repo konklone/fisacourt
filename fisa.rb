@@ -100,9 +100,9 @@ def notify_fisa(long_msg, short_msg)
 
   # do in order of importance, in case it blows up in the middle
   Twilio::SMS.create(to: config['twilio']['to'], from: config['twilio']['from'], body: short_msg) if config['twilio']
+  Pushover.notification(title: short_msg, message: long_msg) if config['pushover']
   Pony.mail(config['email'].merge(body: long_msg)) if config['email']
   Twitter.update(long_msg) if config['twitter']
-  Pushover.notification(title: short_msg, message: long_msg) if config['pushover']
 
   puts "Notified: #{long_msg}"
 end
