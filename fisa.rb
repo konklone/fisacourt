@@ -53,7 +53,7 @@ def check_fisa(test: false, test_error: false)
   puts "Downloading FISC docket..."
   open(
     "http://www.uscourts.gov/uscourts/courts/fisc/index.html?t=#{Time.now.to_i}",
-    "User-Agent" => "@FISACourt, http://twitter.com/FISACourt, https://github.com/konklone/fisa"
+    "User-Agent" => "@FISACourt, twitter.com/FISACourt, github.com/konklone/fisa"
   ) do |uri|
     open("fisa.html", "wt") do |file|
       file.write uri.read
