@@ -1,10 +1,12 @@
 ### Watching the Foreign Intelligence Surveillance Court
 
-This project "watches" the public docket of the FISC, and alerts the public and the administrator through tweets, emails, and texts upon any changes.
+This project "watches" [the public docket of the FISC](http://www.uscourts.gov/uscourts/courts/fisc/index.html), and alerts the public and the administrator through tweets, emails, and texts upon any changes.
 
-More specifically, it is a small script of Ruby code that, when run, downloads the FISC's public docket and compares it against the last time it was run. If there are changes, any configured alert mechanisms (such as SMS or Twitter) will fire.
+More specifically, it is a small Ruby script that downloads the FISC's public docket and compares it against the last time it was run. If there are changes, any configured alert mechanisms (such as SMS or Twitter) will fire.
 
 To use it, you should have a computer available that can automatically run the script every few minutes, all day throughout the day.
+
+It's currently powering the [@FISACourt](https://twitter.com/fisacourt) Twitter account, maintained by [@konklone](https://twitter.com/konklone).
 
 #### Background
 
