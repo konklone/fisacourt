@@ -14,7 +14,7 @@ require 'pushover'
 require 'xmlsimple'
 
 # customizable change detection
-require 'changedetection.rb'
+require './changedetection.rb'
 
 FileUtils.chdir File.dirname(__FILE__)
 
@@ -68,9 +68,12 @@ def check_fisa(test: false, test_error: false)
 
     if changed? or test_error
       begin
-        
-        message = "FISC docket has been updated"
-        message = change_detection_message(@git)
+         
+        if config['changedetection']
+          message = change_detection_message(@git)
+        else
+          message = "FISC docket has been updated"
+        end
 
         @git.add "fisa.html"
         

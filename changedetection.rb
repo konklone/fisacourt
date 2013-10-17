@@ -1,11 +1,17 @@
 #!/usr/bin/env ruby
 
+require 'rubygems'
+require 'yaml'
+require 'fileutils'
 require 'git'
 require 'xmlsimple'
 
 def change_detection_message(git)
 
   begin
+    # get config for messages
+    change_config = YAML.load(File.read("config.yml"))['changedetection']
+
     # determine changed line numbers in fisa.html
     linediffs = [ ]
     git.diff("fisa.html", "fisa.html").each do |file_diff|
@@ -56,11 +62,11 @@ def change_detection_message(git)
 
     # if any named 
     if changedsections.length > 0
-      message = "FISC docket updated " + changedsections.join(", ")
+      message = change_config['startswith'] + changedsections.join(", ")
     end
 
   rescue
-    message = "FISC docket has been updated"
+    message = change_config['fallback']
   end
   
   message
