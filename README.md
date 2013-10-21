@@ -67,6 +67,12 @@ If you're using GitHub, then when FISC updates are detected you can have notific
 
 To do this, set `config.yml`'s `github` value to `username/repo` (using your real username and repo name, e.g. `konklone/fisa`).
 
+#### Downloading PDFs
+
+In case the court later disables the public's access to the documents, the script will download the PDFs posted by the Court as soon as it detects the changes. This feature is optional. To turn it on, uncomment out the `pdf_download` line in your `config.yml`. This will download all the new PDFs posted by the Court as well as those changes detected by the script.
+
+The script will add the PDFs to a 'files' folder in the same directory as the script lives. If you would like the script to save the changes in another location, simply change the location in the `config.yml` to the *absolute* path where you want the files to live. If you are on OSX or Linux, do not use `~` for your home directory as Ruby has difficulties with that; instead, use '/home/USER/LOCATION'.
+
 #### Configuring alerts
 
 Turn on different alert methods by uncommenting and filling out sections of `config.yml`.

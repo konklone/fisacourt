@@ -43,6 +43,29 @@ if config['pushover']
   end
 end
 
+def download_pdfs
+  location = config['pdf_download']
+
+  unless Dir.exist?(location)
+    Dir.mkdir(location)
+  end
+
+  files = @git.diff('HEAD~1', 'HEAD').to_s.each_line.map{|f| f[/\+\s+.+"(.+.pdf)".+$/]; $1}.compact
+  files.each do |file|
+    url = "http://www.uscourts.gov" + file
+    saver = File.join( location, url.split('/').last )
+    open(saver, 'w+'){|f| f << open(url).read}
+  end
+
+  @git.add 'files/'
+  response = @git.commit "Files from FISC docket have been downloaded."
+  sha2 = @git.gcommit(response.split(/[ \[\]]/)[2]).sha
+  puts "[#{sha2}] Downloaded Files."
+
+  system "git push"
+  puts "[#{@sha1}] [#{sha2}] Pushed changes."
+end
+
 # check FISA court for updates, compare to last check
 def check_fisa(test: false, test_error: false)
   return "test" if test
@@ -66,15 +89,19 @@ def check_fisa(test: false, test_error: false)
       begin
         @git.add "fisa.html"
         response = @git.commit "FISC docket has been updated"
-        sha = @git.gcommit(response.split(/[ \[\]]/)[2]).sha
-        puts "[#{sha}] Committed update"
+        @sha1 = @git.gcommit(response.split(/[ \[\]]/)[2]).sha
+        puts "[#{@sha1}] Committed update"
 
-        system "git push"
-        puts "[#{sha}] Pushed changes."
+        if config['pdf_download']
+          download_pdfs
+        else
+          system "git push"
+          puts "[#{@sha1}] Pushed changes."
+        end
 
         raise Exception.new("Fake git error!") if test_error
 
-        sha
+        @sha1
       rescue Exception => ex
         puts "Error doing the git commit and push!"
         puts "Emailing admin, notifying public without SHA."
@@ -111,13 +138,13 @@ def changed?
   @git.diff('HEAD','fisa.html').entries.length != 0
 end
 
-if sha = check_fisa(test: (ARGV[0] == "test"), test_error: (ARGV[0] == "test_error"))
+if @sha1 = check_fisa(test: (ARGV[0] == "test"), test_error: (ARGV[0] == "test_error"))
   url = "http://www.uscourts.gov/uscourts/courts/fisc/index.html"
   short_msg = "Just updated with something!\n#{url}"
   long_msg = short_msg.dup
 
-  if config['github'] and sha.is_a?(String)
-    diff_url = "https://github.com/#{config['github']}/commit/#{sha}"
+  if config['github'] and @sha1.is_a?(String)
+    diff_url = "https://github.com/#{config['github']}/commit/#{@sha1}"
     long_msg += "\n\nLine-by-line breakdown of what changed:\n#{diff_url}"
   end
 
