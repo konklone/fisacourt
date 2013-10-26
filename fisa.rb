@@ -11,6 +11,10 @@ require 'twitter'
 require 'pony'
 require 'twilio-rb'
 require 'pushover'
+require 'xmlsimple'
+
+# customizable change detection
+require './changedetection.rb'
 
 FileUtils.chdir File.dirname(__FILE__)
 
@@ -64,8 +68,16 @@ def check_fisa(test: false, test_error: false)
 
     if changed? or test_error
       begin
+         
+        if config['changedetection']
+          message = change_detection_message(@git)
+        else
+          message = "FISC docket has been updated"
+        end
+
         @git.add "fisa.html"
-        response = @git.commit "FISC docket has been updated"
+        
+        response = @git.commit message
         sha = @git.gcommit(response.split(/[ \[\]]/)[2]).sha
         puts "[#{sha}] Committed update"
 

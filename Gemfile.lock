@@ -23,6 +23,9 @@ GEM
     bini (0.7.0)
       sys-proctable
     builder (3.2.2)
+    clockwork (0.6.1)
+      activesupport
+      tzinfo (~> 0.3.35)
     crack (0.3.2)
     faraday (0.8.8)
       multipart-post (~> 1.2.0)
@@ -60,14 +63,17 @@ GEM
       multi_json (~> 1.0)
       simple_oauth (~> 0.2)
     tzinfo (0.3.37)
+    xml-simple (1.1.2)
     yajl-ruby (1.1.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  clockwork
   git
   pony
   pushover
   twilio-rb!
   twitter
+  xml-simple

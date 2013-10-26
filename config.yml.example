@@ -32,3 +32,8 @@
 # pushover:
 #   user_key:
 #   app_key:
+
+# Uncomment and fill out this section to add changed section to Git commit message
+# changedetection:
+#   startswith: "FISC docket updated "
+#   fallback: "FISC docket has been updated"
