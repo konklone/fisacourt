@@ -26,7 +26,7 @@ RUN /bin/bash -l -c "rbenv rehash"
 
 # check out and install konklone/fisa
 RUN mkdir /apps
-RUN git clone https://github.com/konklone/fisa /apps/fisa # oka
+RUN git clone https://github.com/konklone/fisa /apps/fisa
 
 # copy over whole repository (breaks caching)
 # ADD ./ /apps/fisa
