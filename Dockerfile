@@ -25,7 +25,7 @@ RUN /bin/bash -l -c "gem install bundler --no-ri --no-rdoc"
 
 # check out and install konklone/fisa
 RUN mkdir /apps
-RUN git clone https://github.com/konklone/fisa /apps/fisa
+RUN git clone https://github.com/konklone/fisa /apps/fisa # oka
 
 # copy over whole repository (breaks caching)
 # ADD ./ /apps/fisa
@@ -38,7 +38,7 @@ RUN cd /apps/fisa && bash -l -c bundle install
 ADD config.yml /apps/fisa/config.yml
 
 # run a test
-# RUN cd /apps/fisa && bash -l -c "bundle exec ruby fisa.rb test"
+RUN cd /apps/fisa && bash -l -c "bundle exec ruby fisa.rb test"
 # RUN cd /apps/fisa && bash -l -c "bundle exec clockwork cron.rb"
 
 # set crontab to run every 5 minutes
