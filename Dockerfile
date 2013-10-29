@@ -6,23 +6,33 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu raring main universe" > /etc/apt/
 RUN apt-get update
 
 # basics
-RUN apt-get install -y nginx openssh-server git-core openssh-client curl
-RUN apt-get install -y nano
-RUN apt-get install -y build-essential
-RUN apt-get install -y openssl libreadline6 libreadline6-dev curl zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison subversion pkg-config
+RUN apt-get install -y nginx openssh-server git-core openssh-client curl nano build-essential openssl libreadline6 libreadline6-dev curl zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison subversion pkg-config
 
-# install Ruby
-RUN \curl -L https://get.rvm.io | bash -s stable
-RUN /bin/bash -l -c "rvm requirements"
-RUN /bin/bash -l -c "rvm install 2.0"
+# Install rbenv, help from https://gist.github.com/deepak/5925003
+RUN git clone https://github.com/sstephenson/rbenv.git /usr/local/rbenv
+RUN echo '# rbenv setup' > /etc/profile.d/rbenv.sh
+RUN echo 'export RBENV_ROOT=/usr/local/rbenv' >> /etc/profile.d/rbenv.sh
+RUN echo 'export PATH="$RBENV_ROOT/bin:$PATH"' >> /etc/profile.d/rbenv.sh
+RUN echo 'eval "$(rbenv init -)"' >> /etc/profile.d/rbenv.sh
+RUN chmod +x /etc/profile.d/rbenv.sh
+RUN mkdir /usr/local/rbenv/plugins
+RUN git clone https://github.com/sstephenson/ruby-build.git /usr/local/rbenv/plugins/ruby-build
+ENV RBENV_ROOT /usr/local/rbenv
+
+RUN /bin/bash -l -c "rbenv install 2.0.0-p247"
+RUN /bin/bash -l -c "rbenv global 2.0.0-p247"
 RUN /bin/bash -l -c "gem install bundler --no-ri --no-rdoc"
 
 # check out and install konklone/fisa
-RUN mkdir /apps && cd /apps && git clone https://github.com/konklone/fisa && ls
+RUN mkdir /apps
+RUN git clone https://github.com/konklone/fisa /apps/fisa
+
+# copy over whole repository (breaks caching)
+# ADD ./ /apps/fisa
+
 # with quotes the following doesn't work! I don't understand. I don't understand.
 RUN cd /apps/fisa && bash -l -c bundle install
-RUN /bin/bash -l -c "gem install clockwork"
-
+# RUN /bin/bash -l -c "gem install clockwork"
 
 # copy over personal configuration as last step (breaks caching)
 ADD config.yml /apps/fisa/config.yml
