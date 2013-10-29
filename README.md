@@ -48,6 +48,32 @@ To test out your alerts without requiring the FISA Court to actually update or `
 
 This will pretend a change was made and fire each of your alert mechanisms.
 
+#### Use with Docker
+
+This project can also be setup and run directly via [Docker](http://www.docker.io).
+
+First, clone the repository, then copy `config.yml.example` to `config.yml`:
+
+```
+cp config.yml.example config.yml
+```
+
+Open `config.yml` and fill in any alert mechanisms you want to use, [as described below](#configuring-alerts).
+
+Then, build the container from its Dockerfile, and tag it `fisa`:
+
+```bash
+sudo docker build -rm -t fisa .
+```
+
+Test the `fisa` container by running this command:
+
+```
+sudo docker run -w /apps/fisa fisa bash -l -c "bundle exec ruby fisa.rb test"
+```
+
+To run the container
+
 #### Git
 
 This project depends on its own git repository to detect and track changes. For git interaction to work correctly, you need to ensure:

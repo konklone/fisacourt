@@ -3,9 +3,11 @@ require 'clockwork'
 module Clockwork
 
   handler do |job|
+    puts "Running #{job}"
     if job == "fisa-test"
-      puts "Running #{job}"
       system "bundle exec ruby fisa.rb test"
+    elsif job == "fisa"
+      system "bundle exec ruby fisa.rb"
     end
   end
 
