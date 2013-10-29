@@ -40,7 +40,3 @@ ADD config.yml /apps/fisa/config.yml
 # run a test
 # RUN cd /apps/fisa && bash -l -c "bundle exec ruby fisa.rb test"
 # RUN cd /apps/fisa && bash -l -c "bundle exec clockwork cron.rb"
-
-# set crontab to run every 5 minutes
-# RUN echo "*/1 * * * * cd /apps/fisa && bash -l -c bundle exec ruby /apps/fisa/fisa.rb test" | crontab
-# > /apps/fisa/fisa.log 2>&1" | crontab

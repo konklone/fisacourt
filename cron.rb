@@ -9,5 +9,5 @@ module Clockwork
     end
   end
 
-  every(1.minute, 'fisa-test')
+  every(5.minutes, 'fisa-test')
 end
