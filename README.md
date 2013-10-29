@@ -66,13 +66,25 @@ Then, build the container from its Dockerfile, and tag it `fisa`:
 sudo docker build -rm -t fisa .
 ```
 
-Test the `fisa` container by running this command:
+Test the container and your alert mechanisms by running this command:
 
 ```
 sudo docker run -w /apps/fisa fisa bash -l -c "bundle exec ruby fisa.rb test"
 ```
 
-To run the container
+Have the `fisa` container do a single real check for FISA Court updates by removing the "test":
+
+```
+sudo docker run -w /apps/fisa fisa bash -l -c "bundle exec ruby fisa.rb"
+```
+
+**OR**, you can leave the container running and checking indefinitely with a single command. This will run the script every 5 minutes inside the container:
+
+```
+sudo docker run -w /apps/fisa fisa bash -l -c "bundle exec clockwork cron.rb"
+```
+
+Bear in mind, you will need to rebuild the container, and with the `-no-cache` flag, to use any updates made to this codebase following your initial container build.
 
 #### Git
 
