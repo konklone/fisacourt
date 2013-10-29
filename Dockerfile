@@ -21,7 +21,8 @@ ENV RBENV_ROOT /usr/local/rbenv
 
 RUN /bin/bash -l -c "rbenv install 2.0.0-p247"
 RUN /bin/bash -l -c "rbenv global 2.0.0-p247"
-RUN /bin/bash -l -c "gem install bundler --no-ri --no-rdoc"
+RUN /bin/bash -l -c "gem install bundler clockwork --no-ri --no-rdoc"
+RUN /bin/bash -l -c "rbenv rehash"
 
 # check out and install konklone/fisa
 RUN mkdir /apps
@@ -32,13 +33,12 @@ RUN git clone https://github.com/konklone/fisa /apps/fisa # oka
 
 # with quotes the following doesn't work! I don't understand. I don't understand.
 RUN cd /apps/fisa && bash -l -c bundle install
-# RUN /bin/bash -l -c "gem install clockwork"
 
 # copy over personal configuration as last step (breaks caching)
 ADD config.yml /apps/fisa/config.yml
 
 # run a test
-RUN cd /apps/fisa && bash -l -c "bundle exec ruby fisa.rb test"
+# RUN cd /apps/fisa && bash -l -c "bundle exec ruby fisa.rb test"
 # RUN cd /apps/fisa && bash -l -c "bundle exec clockwork cron.rb"
 
 # set crontab to run every 5 minutes
