@@ -13,8 +13,8 @@ require 'twilio-rb'
 require 'pushover'
 require 'xmlsimple'
 
-# customizable change detection
-require './changedetection.rb'
+# docket detection (optional)
+require './dockets'
 
 FileUtils.chdir File.dirname(__FILE__)
 
@@ -48,15 +48,21 @@ if config['pushover']
 end
 
 # check FISA court for updates, compare to last check
-def check_fisa(test: false, test_error: false)
+def check_fisa(test: false, test_error: false, test_file: false)
   return "test" if test
 
   puts "Pulling latest changes..."
   system "git pull --no-edit" # make sure local branch is tracking a remote!
 
+  if test_file
+    fisa_uri = "./test-fisa.html"
+  else
+    fisa_uri = "http://www.uscourts.gov/uscourts/courts/fisc/index.html?t=#{Time.now.to_i}"
+  end
+
   puts "Downloading FISC docket..."
   open(
-    "http://www.uscourts.gov/uscourts/courts/fisc/index.html?t=#{Time.now.to_i}",
+    fisa_uri,
     "User-Agent" => "@FISACourt, twitter.com/FISACourt, github.com/konklone/fisa"
   ) do |uri|
     open("fisa.html", "wt") do |file|
@@ -68,15 +74,27 @@ def check_fisa(test: false, test_error: false)
 
     if changed? or test_error
       begin
-         
-        if config['changedetection']
-          message = change_detection_message(@git)
-        else
-          message = "FISC docket has been updated"
+
+        # before we accept the changes, parse the diff to figure out
+        # which docket(s) got updated. this is totally optional:
+        # if it fails for any reason, move on.
+        begin
+          dockets = Dockets.changed(@git)
+          puts "Dockets updated: #{dockets.inspect}"
+        rescue Exception => ex
+          dockets = []
+          puts "Error detecting which docket got changed, moving on."
         end
 
+        message = "FISC dockets have been updated"
+        if dockets.any?
+          message << ": #{dockets.join ', '}"
+        end
+
+        return "test" if test_file # stop here if we're testing the file
+
         @git.add "fisa.html"
-        
+
         response = @git.commit message
         sha = @git.gcommit(response.split(/[ \[\]]/)[2]).sha
         puts "[#{sha}] Committed update"
@@ -84,6 +102,7 @@ def check_fisa(test: false, test_error: false)
         system "git push"
         puts "[#{sha}] Pushed changes."
 
+        # test error path
         raise Exception.new("Fake git error!") if test_error
 
         sha
@@ -123,7 +142,7 @@ def changed?
   @git.diff('HEAD','fisa.html').entries.length != 0
 end
 
-if sha = check_fisa(test: (ARGV[0] == "test"), test_error: (ARGV[0] == "test_error"))
+if sha = check_fisa(test: (ARGV[0] == "test"), test_error: (ARGV[0] == "test_error"), test_file: (ARGV[0] == "test_file"))
   url = "http://www.uscourts.gov/uscourts/courts/fisc/index.html"
   short_msg = "Just updated with something!\n#{url}"
   long_msg = short_msg.dup

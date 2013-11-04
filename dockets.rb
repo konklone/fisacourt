@@ -6,68 +6,63 @@ require 'fileutils'
 require 'git'
 require 'xmlsimple'
 
-def change_detection_message(git)
+class Dockets
 
-  begin
-    # get config for messages
-    change_config = YAML.load(File.read("config.yml"))['changedetection']
+  # detect and return changed dockets
+  def self.changed(git)
+
+    dockets = []
 
     # determine changed line numbers in fisa.html
-    linediffs = [ ]
+    line_diffs = [ ]
     git.diff("fisa.html", "fisa.html").each do |file_diff|
-      visitingline = -100
-      file_diff.patch.split("\n").each do |diffline|
-        if diffline.index("@@ ") == 0
+      visiting_line = -100
+      file_diff.patch.split("\n").each do |diff_line|
+        if diff_line.index("@@ ") == 0
           # beginning of a diff summary
-          visitingline = diffline.split(' ')[2].split(',')[0]
-          if visitingline.index('+') != nil
-            visitingline = visitingline.split('+')[1].to_i - 1
-          elsif visitingline.index('-') != nil
-            visitingline = visitingline.split('-')[1].to_i - 1
+          visiting_line = diff_line.split(' ')[2].split(',')[0]
+          if visiting_line.index('+') != nil
+            visiting_line = visiting_line.split('+')[1].to_i - 1
+          elsif visiting_line.index('-') != nil
+            visiting_line = visiting_line.split('-')[1].to_i - 1
           end
-        elsif visitingline < 0
+        elsif visiting_line < 0
           next
         else
-          visitingline = visitingline + 1
-          if diffline.index('+') == 0
-            linediffs << visitingline
-          elsif diffline.index('-') == 0
-            linediffs << visitingline
+          visiting_line = visiting_line + 1
+          if diff_line.index('+') == 0
+            line_diffs << visiting_line
+          elsif diff_line.index('-') == 0
+            line_diffs << visiting_line
           end
         end
       end
     end
 
-    # list headings above changed sections
-    linenum = 1
-    headertext = ""
-    changedsections = []
-    File.open("fisa.html").each do |fileline|
-  
-      if fileline.index("<h3") != nil
-        header = XmlSimple.xml_in(fileline)
-        headertext = header["content"]
+    # list headings above changed dockets
+    line_num = 1
+    header_text = ""
+
+    File.open("fisa.html").each do |file_line|
+
+      if file_line.index("<h3") != nil
+        header = XmlSimple.xml_in(file_line)
+        header_text = header["content"]
       end
-  
-      if linediffs.index(linenum)
-        unless headertext == ""
-          unless changedsections.index(headertext)
-            changedsections << headertext
+
+      if line_diffs.index(line_num)
+        unless header_text == ""
+          unless dockets.index(header_text)
+            dockets << header_text
           end
         end
       end
-  
-      linenum = linenum + 1
+
+      line_num = line_num + 1
     end
 
-    # if any named 
-    if changedsections.length > 0
-      message = change_config['startswith'] + changedsections.join(", ")
-    end
-
-  rescue
-    message = change_config['fallback']
+    dockets
+  rescue Exception => ex
+    []
   end
-  
-  message
 end
