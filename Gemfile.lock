@@ -63,6 +63,7 @@ GEM
       multi_json (~> 1.0)
       simple_oauth (~> 0.2)
     tzinfo (0.3.38)
+    xml-simple (1.1.2)
     yajl-ruby (1.1.0)
 
 PLATFORMS
@@ -75,3 +76,4 @@ DEPENDENCIES
   pushover
   twilio-rb!
   twitter
+  xml-simple
