@@ -91,6 +91,7 @@ def check_fisa(test: false, test_error: false, test_file: false)
           message << ": #{dockets.join ', '}"
         end
 
+        puts "Committing with message: #{message}"
         return "test" if test_file # stop here if we're testing the file
 
         @git.add "fisa.html"
