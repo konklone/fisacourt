@@ -190,7 +190,10 @@ And to enable them on your phone:
 * Log into your Pushover account.
 * Give your device a name and "add" it to Pushover.
 
-### Todo
+#### Atom Feed
 
-* Allow multiple recipients of SMS and email messages (but mark one as 'admin' for errors)
-* Add support for writing an RSS feed to disk
+You can use this URL to follow the FISA Court in your favorite feed reader:
+
+> [https://github.com/konklone/fisa/commits/docket.atom](https://github.com/konklone/fisa/commits/docket.atom)
+
+This works because `fisa.html` is versioned on the `docket` branch, and it is the **only** activity on that branch. So, Github's Atom feed for the `docket` branch is an effective feed for FISA Court updates.
