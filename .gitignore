@@ -2,3 +2,6 @@
 /config.yml.real
 /config.yml.test
 /*.log
+/docket
+/test-fisa.html
+.DS_Store
