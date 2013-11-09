@@ -9,7 +9,7 @@ require 'xmlsimple'
 class Dockets
 
   # detect and return changed dockets
-  def self.changed(git)
+  def self.changed(git, docket)
 
     dockets = []
 
@@ -43,7 +43,7 @@ class Dockets
     line_num = 1
     header_text = ""
 
-    File.open("fisa.html").each do |file_line|
+    File.open("#{docket}/fisa.html").each do |file_line|
 
       if file_line.index("<h3") != nil
         header = XmlSimple.xml_in(file_line)
@@ -63,6 +63,8 @@ class Dockets
 
     dockets
   rescue Exception => ex
+    puts "Error parsing docket!"
+    puts ex.inspect
     []
   end
 end

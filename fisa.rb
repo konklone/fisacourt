@@ -88,11 +88,12 @@ def check_fisa(test: false, test_error: false, use_file: false)
       # which docket(s) got updated. this is totally optional:
       # if it fails for any reason, move on.
       begin
-        dockets = Dockets.changed(@git)
+        dockets = Dockets.changed(@git, @docket)
         puts "Dockets updated: #{dockets.inspect}"
       rescue Exception => ex
         dockets = []
         puts "Error detecting which docket got changed, moving on."
+        puts ex.inspect
       end
 
       message = "FISC dockets have been updated"
