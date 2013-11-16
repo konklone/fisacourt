@@ -197,3 +197,5 @@ You can use this URL to follow the FISA Court in your favorite feed reader:
 > [https://github.com/konklone/fisa/commits/docket.atom](https://github.com/konklone/fisa/commits/docket.atom)
 
 This works because `fisa.html` is versioned on the `docket` branch, and it is the **only** activity on that branch. So, Github's Atom feed for the `docket` branch is an effective feed for FISA Court updates.
+
+![tracking](http://trackbat.com/api/track?tid=UA-252618-13&dh=konklone.github.io&dp=/fisa&dt=readme)
