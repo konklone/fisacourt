@@ -50,13 +50,17 @@ To test out your alerts without requiring the FISA Court to actually update, run
 
 This will pretend a change was made and fire each of your alert mechanisms.
 
-**Archival data**
+### Archiving everything
 
-You can run the script with the `archive` command to re-scrape the entire site's metadata, *without* sending alerts:
+You can run the script with the `archive` command to re-scrape the entire site's metadata, *without* sending alerts and *without* commiting results.
 
 ```bash
-./check archives
+./check archive
 ```
+
+If changes are made to how data is processed, running an `archive` command will safely re-process everything, and write to the `docket/` directory.
+
+However, it is up to an admin to review, commit, and push the changes. It's recommended the cronjob be turned off during this process.
 
 ### Git
 
@@ -177,7 +181,11 @@ If anyone from the FISC is reading this, and wondering why anyone would go to th
 * Your RSS feeds only show the last 10 items. For anyone to download the full metadata and contents of the docket of the FISC, the RSS feed is not useful.
 * An RSS feed of 10 items also means that, should you need to upload more than 10 documents at once, some data will never appear on the RSS feed.
 * Your RSS feed's `<description>` tags contain a raw HTML blob, which needs to be parsed in order to figure out anything useful (including the actual URL to download a file). So scraping your HTML is a necessity no matter what -- may as well just write a scraper for the whole thing.
+
+There are some additional data problems:
+
 * The publication dates for anything before 4/30 are mostly incorrect. Instead, the dates reflect some sort of batch upload process during the transition from the old to the new site.
+* There are no real unique IDs for documents. URLs use slugs that are auto-generated based on order (e.g. `order-25` for the 25th document titled "Order" uploaded to your site). RSS feeds show a `438 at http://www.fisc.uscourts.gov`, which is clearly an auto-increment database ID (appearing nowhere visible on the site) that I would not want to stake my data interoperability on.
 
 You could eliminate the need for anyone to scrape your website's HTML (and incur load on your systems, etc.) by providing **either** of:
 
@@ -190,4 +198,5 @@ You could eliminate the need for anyone to scrape your website's HTML (and incur
   * Or, you may want to call up the FCC: [they used contentapi](http://www.fcc.gov/encyclopedia/content-api-drupal-module) on their site, though it looks like a less active project.
   * Or, invent your own. Feel free to take inspiration from other [APIs for public records](https://sunlightlabs.github.io/congress/).
 
-Additionally, please fix the publication dates for documents: instead of reflecting the document's date of entry into the Drupal backend, the dates should reflect when they became public record.
+
+Additionally, please assign unique IDs, and fix the publication dates for documents. Instead of reflecting the document's date of entry into the Drupal backend, the dates should reflect when they became public record.
