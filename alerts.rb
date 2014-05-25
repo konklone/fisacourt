@@ -1,11 +1,7 @@
-require 'safe_yaml'
-
 require 'twitter'
 require 'pony'
 require 'twilio-rb'
 require 'pushover'
-
-
 
 module Alerts
 
