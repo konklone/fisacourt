@@ -12,6 +12,10 @@ require 'pony'
 require 'twilio-rb'
 require 'pushover'
 
+# the URL we're tracking
+FISA_URL = "http://www.fisc.uscourts.gov/public-filings"
+
+
 # working directory should always be next to this script, to read in config.yml
 FileUtils.chdir File.dirname(__FILE__)
 
@@ -65,8 +69,8 @@ def check_fisa(test: false, test_error: false, use_file: false)
   else
     puts "Downloading FISC docket..."
     body = open(
-      "http://www.uscourts.gov/uscourts/courts/fisc/index.html?t=#{Time.now.to_i}",
-      "User-Agent" => "@FISACourt, twitter.com/FISACourt, github.com/konklone/fisa"
+      "#{FISA_URL}?t=#{Time.now.to_i}",
+      "User-Agent" => "@FISACourt, twitter.com/FISACourt, github.com/konklone/fisacourt"
     ).read
   end
 
