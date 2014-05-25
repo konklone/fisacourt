@@ -32,23 +32,31 @@ bundle install
 
 Copy `config.yml.example` to `config.yml`, then uncomment and fill in any of the sections for `twitter`, `email`, and `twilio` (SMS) to enable those kinds of notifications. They're all optional. Details on enabling each of them are below.
 
-Once configured, run the script to check the FISC website:
+Once configured, run the script to check the first page of FISC filings:
 
 ```bash
-./fisa.rb
+./check
 ```
 
-If the site's changed, the new docket data will be committed to git, and any alert mechanisms you've configured will fire.
+If there are new filings, the new docket data will be committed to git, and any alert mechanisms you've configured will fire.
 
 **Testing alerts**
 
 To test out your alerts without requiring the FISA Court to actually update, run:
 
 ```bash
-./fisa.rb test
+./check test
 ```
 
 This will pretend a change was made and fire each of your alert mechanisms.
+
+**Archival data**
+
+You can run the script with the `archive` command to re-scrape the entire site's metadata, *without* sending alerts:
+
+```bash
+./check archives
+```
 
 ### Git
 
@@ -67,7 +75,7 @@ If the `git push` succeeds, but the remote branch is not configured correctly, i
 
 If you're using GitHub, then when FISC updates are detected you can have notification messages include a URL to view the change on GitHub.
 
-To do this, set `config.yml`'s `github` value to `username/repo` (using your real username and repo name, e.g. `konklone/fisa`).
+To do this, set `config.yml`'s `github` value to `username/repo` (using your real username and repo name, e.g. `konklone/fisacourt`).
 
 ### Configuring alerts
 
@@ -158,7 +166,7 @@ And to enable them on your phone:
 
 You can use this URL to follow the FISA Court in your favorite feed reader:
 
-> [https://github.com/konklone/fisa/commits/docket.atom](https://github.com/konklone/fisa/commits/docket.atom)
+> [https://github.com/konklone/fisacourt/commits/docket.atom](https://github.com/konklone/fisacourt/commits/docket.atom)
 
 This works because `fisa.html` is versioned on the `docket` branch, and it is the **only** activity on that branch. So, GitHub's Atom feed for the `docket` branch is an effective feed for FISA Court updates.
 
@@ -169,13 +177,11 @@ If anyone from the FISC is reading this, and wondering why anyone would go to th
 * Your RSS feeds only show the last 10 items. For anyone to download the full metadata and contents of the docket of the FISC, the RSS feed is not useful.
 * An RSS feed of 10 items also means that, should you need to upload more than 10 documents at once, some data will never appear on the RSS feed.
 * Your RSS feed's `<description>` tags contain a raw HTML blob, which needs to be parsed in order to figure out anything useful (including the actual URL to download a file). So scraping your HTML is a necessity no matter what -- may as well just write a scraper for the whole thing.
-* It's unclear what's contained in your RSS feed. Does it include Correspondence? If so, how would it be programmatically separated from formal docket activity?
 * The publication dates for anything before 4/30 are mostly incorrect. Instead, the dates reflect some sort of batch upload process during the transition from the old to the new site.
 
 You could eliminate the need for anyone to scrape your website's HTML (and incur load on your systems, etc.) by providing **either** of:
 
 * Improved, separate archival RSS feeds.
-  * Make an RSS feed for docket activity, and a separate one for correspondence.
   * Paginate the RSS feed endpoints, so one can trace it back as far as needed.
   * Simplify the `<description>` tag to just a plaintext description.
   * (Ab)use `<category>` tags to include any other metadata.
