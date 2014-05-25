@@ -22,8 +22,10 @@ module FISC
 
 
   def self.download!(page: 1)
+    url = url_for page
+    puts "Downloading: #{url}"
     open(
-      url_for(page),
+      url,
       "User-Agent" => "@FISACourt, twitter.com/FISACourt, github.com/konklone/fisacourt"
     ).read
   end
@@ -34,15 +36,12 @@ module FISC
     if options[:use_file]
       body = File.read "./test/filings.html"
     else
-      puts "Downloading public filings..."
       body = download!
-
     end
 
-    filings_from_body! body
-
-    File.open("docket/fisa.html", "w") {|file| file.write body}
-
+    # TODO: replace writing filing HTML to updating parsed data
+    # filings_from_body! body
+    File.open("docket/filings.html", "w") {|file| file.write body}
 
     puts "Saved current state of FISC docket."
 

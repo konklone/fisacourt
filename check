@@ -17,7 +17,10 @@ options = {
   archive: (ARGV[0] == "archive")
 }
 
-if sha = FISC.check!(options: options)
+# always download data from the FISC, get any resulting commit SHA
+sha = FISC.check!(options: options)
+
+if sha and !options[:archive]
   message = "Just updated with something!\n#{FISC::URL}"
   short_message = message.dup
 
