@@ -9,35 +9,25 @@ require 'fileutils'
 require 'open-uri'
 require 'git'
 
+# the URLs we're tracking
+HOME_URL = "http://www.fisc.uscourts.gov"
+FILINGS_URL = "http://www.fisc.uscourts.gov/public-filings"
+CORRESPONDENCE_URL = "http://www.fisc.uscourts.gov/correspondence"
+
+
 # working directory should always be next to this script, to read in config.yml
 FileUtils.chdir File.dirname(__FILE__)
-
 module FISC
   def self.config
     @config ||= YAML.safe_load(File.read('config.yml'))
   end
 end
 
-# the URLs we're tracking
-HOME_URL = "http://www.fisc.uscourts.gov"
-FILINGS_URL = "http://www.fisc.uscourts.gov/public-filings"
-CORRESPONDENCE_URL = "http://www.fisc.uscourts.gov/correspondence"
-
 require './alerts'
-Alerts.config!
+FISC::Alerts.config!
 
-
-# ensure git repo/branch for docket is checked out and ready
-# assumptions: remote exists, and branch exists on remote
-if !File.exists?("docket")
-  puts "[git] Cloning docket branch..."
-  system "git clone --branch #{FISC.config['docket']['branch']} --single-branch #{FISC.config['docket']['remote']} docket"
-end
-puts "[git] Switching to docket branch..."
-system "cd docket && git checkout #{FISC.config['docket']['branch']}"
-puts "[git] Pulling latest changes..."
-system "cd docket && git pull --no-edit"
-@git = Git.open "docket"
+require "./git"
+FISC::Git.init!
 
 
 # check FISA court for updates, compare to last check
@@ -45,19 +35,17 @@ def check_fisa(test: false, test_error: false, use_file: false)
   return "test" if test
 
   if use_file
-    body = File.read "./test-fisa.html"
+    body = File.read "./test/filings.html"
   else
     puts "Downloading FISC docket..."
     body = open(
-      "#{HOME_URL}?t=#{Time.now.to_i}",
+      "#{FILINGS_URL}?t=#{Time.now.to_i}",
       "User-Agent" => "@FISACourt, twitter.com/FISACourt, github.com/konklone/fisacourt"
     ).read
   end
 
-  open("docket/fisa.html", "wt") do |file|
-    file.write body
-    file.close
-  end
+  File.open("docket/fisa.html", "w") {|file| file.write body}
+  File.open("docket/fisa2.html", "w") {|file| file.write body}
 
   puts "Saved current state of FISC docket."
 
@@ -66,27 +54,15 @@ def check_fisa(test: false, test_error: false, use_file: false)
 
       message = "FISC dockets have been updated"
       puts "Committing with message: #{message}"
-
-      @git.add "fisa.html"
-
-      response = @git.commit message
-      sha = @git.gcommit(response.split(/[ \[\]]/)[2]).sha
-      puts "[#{sha}] Committed update"
-
-      system "cd docket && git push"
-      puts "[#{sha}] Pushed changes."
+      FISC::Git.save! message
 
       # test error path
       raise Exception.new("Fake git error!") if test_error
 
       sha
     rescue Exception => ex
-      puts "Error doing the git commit and push!"
-      puts "Emailing admin, notifying public without SHA."
-      puts
-      puts ex.inspect
-
-      Alerts.admin! "Git error!"
+      puts "Error doing the git commit and push! #{ex.inspect}"
+      FISC::Alerts.admin! "Git error!"
 
       true
     end
@@ -97,9 +73,7 @@ def check_fisa(test: false, test_error: false, use_file: false)
 
 end
 
-def changed?
-  @git.diff('HEAD','fisa.html').entries.length != 0
-end
+
 
 if sha = check_fisa(test: (ARGV[0] == "test"), test_error: (ARGV[0] == "test_error"), use_file: (ARGV[0] == "use_file"))
   message = "Just updated with something!\n#{HOME_URL}"
@@ -110,7 +84,7 @@ if sha = check_fisa(test: (ARGV[0] == "test"), test_error: (ARGV[0] == "test_err
     message += "\n\nLine-by-line breakdown of what changed:\n#{diff_url}"
   end
 
-  Alerts.admin! message, short_message
-  Alerts.public! message
+  FISC::Alerts.admin! message, short_message
+  FISC::Alerts.public! message
   puts "Notified: #{message}"
 end
