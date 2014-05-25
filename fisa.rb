@@ -11,10 +11,6 @@ require 'twitter'
 require 'pony'
 require 'twilio-rb'
 require 'pushover'
-require 'xmlsimple'
-
-# docket detection (optional)
-require './dockets'
 
 # working directory should always be next to this script, to read in config.yml
 FileUtils.chdir File.dirname(__FILE__)
@@ -84,23 +80,7 @@ def check_fisa(test: false, test_error: false, use_file: false)
   if changed? or test_error
     begin
 
-      # before we accept the changes, parse the diff to figure out
-      # which docket(s) got updated. this is totally optional:
-      # if it fails for any reason, move on.
-      begin
-        dockets = Dockets.changed(@git, @docket)
-        puts "Dockets updated: #{dockets.inspect}"
-      rescue Exception => ex
-        dockets = []
-        puts "Error detecting which docket got changed, moving on."
-        puts ex.inspect
-      end
-
       message = "FISC dockets have been updated"
-      if dockets.any?
-        message << ": #{dockets.join ', '}"
-      end
-
       puts "Committing with message: #{message}"
 
       @git.add "fisa.html"
