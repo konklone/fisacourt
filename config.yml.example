@@ -1,6 +1,6 @@
 # (required) name of branch managing fisa.html (change for testing/dev)
 docket:
-  remote: git@github.com:konklone/fisa.git
+  remote: git@github.com:konklone/fisacourt.git
   branch: docket
 
 # Uncomment and fill out to post Github diff URLs
