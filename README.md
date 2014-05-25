@@ -1,4 +1,4 @@
-### Watching the Foreign Intelligence Surveillance Court
+## Watching the Foreign Intelligence Surveillance Court
 
 This project "watches" [the public docket of the FISC](http://www.fisc.uscourts.gov/), and upon any changes, alerts the public and the administrator through tweets, emails, and text messages.
 
@@ -8,7 +8,9 @@ To use it, you should have a computer available that can automatically run the s
 
 It's currently powering the [@FISACourt](https://twitter.com/fisacourt) Twitter account, maintained by [@konklone](https://twitter.com/konklone).
 
-#### Background
+Reader: **do you work for the FISA Court?** If so, see [my notes at the bottom](#a-note-to-the-fisc).
+
+### Background
 
 The [Foreign Intelligence Surveillance Court](https://en.wikipedia.org/wiki/United_States_Foreign_Intelligence_Surveillance_Court) (FISC) is responsible, under the law known as [FISA](https://en.wikipedia.org/wiki/Foreign_Intelligence_Surveillance_Act), for overseeing the surveillance activity of the US executive branch.
 
@@ -19,7 +21,8 @@ To publish these, the FISC began operating a minimalist public docket that liste
 On April 30th, 2014, the FISC launched a more full website at [fisc.uscourts.gov](http://www.fisc.uscourts.gov).
 
 
-#### Setup and Usage
+
+### Setup and Usage
 
 Install dependencies with bundler:
 
@@ -47,7 +50,7 @@ To test out your alerts without requiring the FISA Court to actually update, run
 
 This will pretend a change was made and fire each of your alert mechanisms.
 
-#### Git
+### Git
 
 This project depends on its own git repository to detect and track changes. For git interaction to work correctly, you need to ensure:
 
@@ -60,13 +63,13 @@ If the `git push` fails for some reason, it will continue on and alert the world
 
 If the `git push` succeeds, but the remote branch is not configured correctly, it will post a GitHub URL to a non-existent commit (a 404). If the branch is then configured correctly and the commits pushed, the URL will then work as expected.
 
-#### GitHub integration
+### GitHub integration
 
 If you're using GitHub, then when FISC updates are detected you can have notification messages include a URL to view the change on GitHub.
 
 To do this, set `config.yml`'s `github` value to `username/repo` (using your real username and repo name, e.g. `konklone/fisa`).
 
-#### Configuring alerts
+### Configuring alerts
 
 Turn on different alert methods by uncommenting and filling out sections of `config.yml`.
 
@@ -151,10 +154,34 @@ And to enable them on your phone:
 * Log into your Pushover account.
 * Give your device a name and "add" it to Pushover.
 
-#### Atom Feed
+### Atom Feed
 
 You can use this URL to follow the FISA Court in your favorite feed reader:
 
 > [https://github.com/konklone/fisa/commits/docket.atom](https://github.com/konklone/fisa/commits/docket.atom)
 
 This works because `fisa.html` is versioned on the `docket` branch, and it is the **only** activity on that branch. So, GitHub's Atom feed for the `docket` branch is an effective feed for FISA Court updates.
+
+### A note to the FISC
+
+If anyone from the FISC is reading this, and wondering why anyone would go to the trouble of scraping your brand new website (with an RSS feed and all):
+
+* Your RSS feeds only show the last 10 items. For anyone to download the full metadata and contents of the docket of the FISC, the RSS feed is not useful.
+* An RSS feed of 10 items also means that, should you need to upload more than 10 documents at once, some data will never appear on the RSS feed.
+* Your RSS feed's `<description>` tags contain a raw HTML blob, which needs to be parsed in order to figure out anything useful (including the actual URL to download a file). So scraping your HTML is a necessity no matter what -- may as well just write a scraper for the whole thing.
+* It's unclear what's contained in your RSS feed. Does it include Correspondence? If so, how would it be programmatically separated from formal docket activity?
+* The publication dates for anything before 4/30 are mostly incorrect. Instead, the dates reflect some sort of batch upload process during the transition from the old to the new site.
+
+You could eliminate the need for anyone to scrape your website's HTML (and incur load on your systems, etc.) by providing **either** of:
+
+* Improved, separate archival RSS feeds.
+  * Make an RSS feed for docket activity, and a separate one for correspondence.
+  * Paginate the RSS feed endpoints, so one can trace it back as far as needed.
+  * Simplify the `<description>` tag to just a plaintext description.
+  * (Ab)use `<category>` tags to include any other metadata.
+* A web API to your content.
+  * Your source code indicates you're using Drupal -- this ["services" plugin](https://drupal.org/project/services) seems to be reasonably popular and well-maintained.
+  * Or, you may want to call up the FCC: [they used contentapi](http://www.fcc.gov/encyclopedia/content-api-drupal-module) on their site, though it looks like a less active project.
+  * Or, invent your own. Feel free to take inspiration from other [APIs for public records](https://sunlightlabs.github.io/congress/).
+
+Additionally, please fix the publication dates for documents: instead of reflecting the document's date of entry into the Drupal backend, the dates should reflect when they became public record.
