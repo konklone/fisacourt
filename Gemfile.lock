@@ -27,7 +27,6 @@ GEM
       activesupport
       tzinfo (~> 0.3.35)
     crack (0.3.2)
-    curb (0.8.5)
     faraday (0.8.8)
       multipart-post (~> 1.2.0)
     git (1.2.6)
@@ -72,7 +71,6 @@ PLATFORMS
 
 DEPENDENCIES
   clockwork
-  curb
   git
   pony
   pushover
