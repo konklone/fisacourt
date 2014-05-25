@@ -19,7 +19,9 @@ module FISC
 end
 
 # the URLs we're tracking
-FISC_URL = "http://www.fisc.uscourts.gov/public-filings"
+HOME_URL = "http://www.fisc.uscourts.gov"
+FILINGS_URL = "http://www.fisc.uscourts.gov/public-filings"
+CORRESPONDENCE_URL = "http://www.fisc.uscourts.gov/correspondence"
 
 require './alerts'
 Alerts.config!
@@ -27,16 +29,15 @@ Alerts.config!
 
 # ensure git repo/branch for docket is checked out and ready
 # assumptions: remote exists, and branch exists on remote
-@docket = "docket"
-if !File.exists?(@docket)
+if !File.exists?("docket")
   puts "[git] Cloning docket branch..."
-  system "git clone --branch #{FISC.config['docket']['branch']} --single-branch #{FISC.config['docket']['remote']} #{@docket}"
+  system "git clone --branch #{FISC.config['docket']['branch']} --single-branch #{FISC.config['docket']['remote']} docket"
 end
 puts "[git] Switching to docket branch..."
-system "cd #{@docket} && git checkout #{FISC.config['docket']['branch']}"
+system "cd docket && git checkout #{FISC.config['docket']['branch']}"
 puts "[git] Pulling latest changes..."
-system "cd #{@docket} && git pull --no-edit"
-@git = Git.open @docket
+system "cd docket && git pull --no-edit"
+@git = Git.open "docket"
 
 
 # check FISA court for updates, compare to last check
@@ -48,12 +49,12 @@ def check_fisa(test: false, test_error: false, use_file: false)
   else
     puts "Downloading FISC docket..."
     body = open(
-      "#{FISC_URL}?t=#{Time.now.to_i}",
+      "#{HOME_URL}?t=#{Time.now.to_i}",
       "User-Agent" => "@FISACourt, twitter.com/FISACourt, github.com/konklone/fisacourt"
     ).read
   end
 
-  open("#{@docket}/fisa.html", "wt") do |file|
+  open("docket/fisa.html", "wt") do |file|
     file.write body
     file.close
   end
@@ -72,7 +73,7 @@ def check_fisa(test: false, test_error: false, use_file: false)
       sha = @git.gcommit(response.split(/[ \[\]]/)[2]).sha
       puts "[#{sha}] Committed update"
 
-      system "cd #{@docket} && git push"
+      system "cd docket && git push"
       puts "[#{sha}] Pushed changes."
 
       # test error path
@@ -101,7 +102,7 @@ def changed?
 end
 
 if sha = check_fisa(test: (ARGV[0] == "test"), test_error: (ARGV[0] == "test_error"), use_file: (ARGV[0] == "use_file"))
-  message = "Just updated with something!\n#{FISC_URL}"
+  message = "Just updated with something!\n#{HOME_URL}"
   short_message = message.dup
 
   if FISC.config['github'] and sha.is_a?(String)
