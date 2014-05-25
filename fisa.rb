@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 
+# requires bundler and rubygems, just deal
 require 'rubygems'
+require 'bundler/setup'
+
 require 'yaml'
 require 'fileutils'
 require 'open-uri'
