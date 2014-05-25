@@ -6,4 +6,6 @@ gem 'twitter'
 gem 'pony'
 gem 'twilio-rb', git: "git://github.com/stevegraham/twilio-rb.git"
 gem 'clockwork'
-gem 'xml-simple'
+
+gem 'curb'
+gem 'safe_yaml'
