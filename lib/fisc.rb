@@ -5,33 +5,48 @@ require './lib/alerts'
 require "./lib/git"
 
 module FISC
-  HOME_URL = "http://www.fisc.uscourts.gov"
-  FILINGS_URL = "http://www.fisc.uscourts.gov/public-filings"
-  CORRESPONDENCE_URL = "http://www.fisc.uscourts.gov/correspondence"
+  URL = "http://www.fisc.uscourts.gov/public-filings"
 
   def self.config
     @config ||= YAML.safe_load(File.read('config.yml'))
   end
 
-  def self.check!(test: false, test_error: false, use_file: false)
-    return "test" if test
+  def self.url_for(page)
+    # includes both docket activity and correspondence
+    url = URL
+    url << "?field_case_reference_nid=All"
+    url << "&page=#{page}"
+    url << "&t=#{Time.now.to_i}"
+    url
+  end
 
-    if use_file
+
+  def self.download!(page: 1)
+    open(
+      url_for(page),
+      "User-Agent" => "@FISACourt, twitter.com/FISACourt, github.com/konklone/fisacourt"
+    ).read
+  end
+
+  def self.check!(options: {})
+    return "test" if options[:test]
+
+    if options[:use_file]
       body = File.read "./test/filings.html"
     else
-      puts "Downloading FISC docket..."
-      body = open(
-        "#{FILINGS_URL}?t=#{Time.now.to_i}",
-        "User-Agent" => "@FISACourt, twitter.com/FISACourt, github.com/konklone/fisacourt"
-      ).read
+      puts "Downloading public filings..."
+      body = download!
+
     end
 
+    filings_from_body! body
+
     File.open("docket/fisa.html", "w") {|file| file.write body}
-    File.open("docket/fisa2.html", "w") {|file| file.write body}
+
 
     puts "Saved current state of FISC docket."
 
-    if FISC::Git.changed? or test_error
+    if FISC::Git.changed? or options[:test_error]
       begin
         raise Exception.new("Fake git error!") if test_error
         FISC::Git.save! "FISC dockets have been updated"
