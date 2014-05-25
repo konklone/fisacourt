@@ -1,8 +1,8 @@
 ### Watching the Foreign Intelligence Surveillance Court
 
-This project "watches" [the public docket of the FISC](http://www.uscourts.gov/uscourts/courts/fisc/index.html), and alerts the public and the administrator through tweets, emails, and texts upon any changes.
+This project "watches" [the public docket of the FISC](http://www.fisc.uscourts.gov/), and upon any changes, alerts the public and the administrator through tweets, emails, and text messages.
 
-More specifically, it is a small Ruby script that downloads the FISC's public docket and compares it against the last time it was run. If there are changes, any configured alert mechanisms (such as SMS or Twitter) will fire.
+It is a small Ruby script that downloads the FISC's public docket and compares it against the last time it was run. If there are changes, any configured alert mechanisms (such as SMS or Twitter) will fire.
 
 To use it, you should have a computer available that can automatically run the script every few minutes, all day throughout the day.
 
@@ -14,33 +14,32 @@ The [Foreign Intelligence Surveillance Court](https://en.wikipedia.org/wiki/Unit
 
 It has operated since 1978, but had no public docket of orders or opinions until June of 2013. That month, amidst heightened public attention to national surveillance policies, the EFF and the ACLU each filed motions aimed at unsealing FISC records, and successfully requested that these motions themselves become public.
 
-To publish these, the FISC now operates a minimalist public docket that lists links to scanned image PDFs:
+To publish these, the FISC began operating a minimalist public docket that listed links to, mostly, scanned image PDFs. You can see [what that docket looked like in April of 2014](https://web.archive.org/web/20140416090332/http://www.uscourts.gov/uscourts/courts/fisc/index.html) courtesy of the Internet Archive.
 
-> [http://www.uscourts.gov/uscourts/courts/fisc/index.html](http://www.uscourts.gov/uscourts/courts/fisc/index.html)
+On April 30th, 2014, the FISC launched a more full website at [fisc.uscourts.gov](http://www.fisc.uscourts.gov).
 
-Since then, several other litigants (Microsoft, Google, Yahoo, and Facebook) have filed their own public outstanding motions with FISC. It is expected that future FISC public records will appear at this page.
 
 #### Setup and Usage
 
-Install dependencies:
+Install dependencies with bundler:
 
 ```bash
-gem install git twitter pony twilio-rb pushover
+bundle install
 ```
 
 Copy `config.yml.example` to `config.yml`, then uncomment and fill in any of the sections for `twitter`, `email`, and `twilio` (SMS) to enable those kinds of notifications. They're all optional. Details on enabling each of them are below.
 
-Once configured, run the script to check the FISC website and update `fisa.html`.
+Once configured, run the script to check the FISC website:
 
 ```bash
 ./fisa.rb
 ```
 
-If the site's changed, the new `fisa.html` will be committed to git, and any alert mechanisms you've configured will fire.
+If the site's changed, the new docket data will be committed to git, and any alert mechanisms you've configured will fire.
 
 **Testing alerts**
 
-To test out your alerts without requiring the FISA Court to actually update or `fisa.html` to change, run:
+To test out your alerts without requiring the FISA Court to actually update, run:
 
 ```bash
 ./fisa.rb test
