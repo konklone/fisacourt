@@ -23,7 +23,7 @@ module FISC
 
       doc.css("tbody tr").each do |row|
         cells = row.css "td"
-        time = Time.parse cells[0].at("span")['content']
+        posted_on = Time.parse(cells[0].at("span")['content']).strftime("%Y-%m-%d")
         title = cells[1].text.strip
         landing_url = URI.join(FISC::URL, cells[1].css("a").first['href']).to_s
         id = landing_url.split("/").last
@@ -37,27 +37,32 @@ module FISC
         file_url = cells[3].css("a").first['href']
 
         filings << {
-          'time' => time,
-          'landing_url' => landing_url,
-          'id' => id,
+          'file_url' => file_url,
           'title' => title,
           'dockets' => dockets,
-          'file_url' => file_url
+          'posted_on' => posted_on,
+          'landing_url' => landing_url,
+          'id' => id
         }
       end
 
       filings
     end
 
+    # save the filing detail to a YAML file at a predictable path
+    def self.save!(filing)
+      dir = "docket/filings"
+      FileUtils.mkdir_p dir
+      path = "#{dir}/#{filing['id']}.yml"
+      yaml = YAML.dump filing
+      File.open(path, "w") {|file| file.write yaml}
+      true
+    end
+
     # TODO FOR LATER:
     # make another web request to the detail page for a filing,
     # stick the description onto the hash, and return the hash
     def self.fetch_detail!(filing)
-
-    end
-
-    # save the filing detail to a YAML file at a predictable path
-    def self.save!(filing)
 
     end
 

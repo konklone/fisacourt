@@ -50,17 +50,16 @@ module FISC
       # parse filing data out of the HTML
       filings = FISC::Filings.for_page body
 
-      puts filings
-
-      # save a .yml file for each one into the docket dir
-      # filings.each do |filing|
-      #   FISC::Filings.save! filing
-      # end
+      # save a file for each one into the docket dir
+      filings.each do |filing|
+        puts "\t[#{filing['id']}] "
+        FISC::Filings.save! filing
+      end
     end
 
     puts "Saved current state of FISC docket."
 
-    if FISC::Git.changed? or options[:test_error]
+    if !options[:archive] and (FISC::Git.changed? or options[:test_error])
       begin
         raise Exception.new("Fake git error!") if test_error
         FISC::Git.save! "FISC dockets have been updated"
