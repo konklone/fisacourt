@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'bundler/setup'
+require 'fileutils'
+
+require "./lib/fisc"
+
+FileUtils.chdir File.dirname(__FILE__) # must do before git
+FISC::Alerts.config!
+FISC::Git.init!
+
+if sha = FISC.check!(test: (ARGV[0] == "test"), test_error: (ARGV[0] == "test_error"), use_file: (ARGV[0] == "use_file"))
+  message = "Just updated with something!\n#{FISC::HOME_URL}"
+  short_message = message.dup
+
+  if FISC.config['github'] and sha.is_a?(String)
+    diff_url = "https://github.com/#{FISC.config['github']}/commit/#{sha}"
+    message += "\n\nLine-by-line breakdown of what changed:\n#{diff_url}"
+  end
+
+  FISC::Alerts.admin! message, short_message
+  FISC::Alerts.public! message
+  puts "Notified: #{message}"
+else
+  puts "Nothing changed."
+end

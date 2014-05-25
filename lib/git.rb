@@ -1,4 +1,4 @@
-
+require 'git'
 
 module FISC
   module Git
@@ -29,7 +29,7 @@ module FISC
 
       response = repo.commit message
       sha = repo.gcommit(response.split(/[ \[\]]/)[2]).sha
-      puts "[#{sha}] Committed update"
+      puts "[#{sha}] Committed with message: #{message}"
 
       system "cd docket && git push"
       puts "[#{sha}] Pushed changes."
