@@ -49,14 +49,15 @@ def check_fisa(test: false, test_error: false, use_file: false)
 
   puts "Saved current state of FISC docket."
 
-  if changed? or test_error
+  if FISC::Git.changed? or test_error
     begin
 
       message = "FISC dockets have been updated"
       puts "Committing with message: #{message}"
-      FISC::Git.save! message
+      sha = FISC::Git.save! message
 
-      # test error path
+      # test error path, as if it happened AFTER at least
+      # some git work was done
       raise Exception.new("Fake git error!") if test_error
 
       sha

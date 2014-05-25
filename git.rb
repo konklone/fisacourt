@@ -24,7 +24,7 @@ module FISC
       repo.diff('HEAD','.').entries.length != 0
     end
 
-    def self.save!
+    def self.save!(message)
       repo.add "."
 
       response = repo.commit message
@@ -33,6 +33,8 @@ module FISC
 
       system "cd docket && git push"
       puts "[#{sha}] Pushed changes."
+
+      sha
     end
   end
 end
