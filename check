@@ -18,7 +18,16 @@ options = {
 }
 
 # always download data from the FISC, get any resulting commit SHA
-sha = FISC.check!(options: options)
+begin
+
+  sha = FISC.check!(options: options)
+
+# email any uncaught exceptions to the admin
+rescue Exception => exc
+  FISC::Alerts.email! "Error scraping the FISC! #{exc.inspect}"
+  # re-raise
+  raise exc
+end
 
 if sha and !options[:archive]
   message = "Just updated with something!\n#{FISC::URL}"
