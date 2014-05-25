@@ -12,7 +12,7 @@ It's currently powering the [@FISACourt](https://twitter.com/fisacourt) Twitter 
 
 The [Foreign Intelligence Surveillance Court](https://en.wikipedia.org/wiki/United_States_Foreign_Intelligence_Surveillance_Court) (FISC) is responsible, under the law known as [FISA](https://en.wikipedia.org/wiki/Foreign_Intelligence_Surveillance_Act), for overseeing the surveillance activity of the US executive branch.
 
-It has operated since 1978, but had no public docket of orders or opinions until June of 2013. That month, amidst heightened public attention to national surveillance policies, the EFF and the ACLU each filed motions aimed at unsealing FISC records, and successfully requested that these motions themselves become public.
+It has operated since 1978, but had no public docket of orders or opinions until June of 2013. That month, amidst heightened public attention to national surveillance policies, the [EFF](https://www.eff.org) and the [ACLU](https://www.aclu.org) each filed motions aimed at unsealing FISC records, and successfully requested that these motions themselves become public.
 
 To publish these, the FISC began operating a minimalist public docket that listed links to, mostly, scanned image PDFs. You can see [what that docket looked like in April of 2014](https://web.archive.org/web/20140416090332/http://www.uscourts.gov/uscourts/courts/fisc/index.html) courtesy of the Internet Archive.
 
