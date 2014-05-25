@@ -6,6 +6,7 @@ module FISC
     # ensure git repo/branch for docket is checked out and ready
     # assumptions: remote exists, and branch exists on remote
     def self.init!
+      puts
       if !File.exists?("docket")
         puts "[git] Cloning docket branch..."
         system "git clone --branch #{FISC.config['docket']['branch']} --single-branch #{FISC.config['docket']['remote']} docket"
@@ -14,6 +15,7 @@ module FISC
       system "cd docket && git checkout #{FISC.config['docket']['branch']}"
       puts "[git] Pulling latest changes..."
       system "cd docket && git pull --no-edit"
+      puts
     end
 
     def self.repo

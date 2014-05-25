@@ -6,7 +6,15 @@ require 'pushover'
 module FISC
   module Alerts
 
+    # for lower priority things that don't need to get texted every 5 mins
+    def self.email!(message)
+      puts "Emailing the admin: #{message}"
+      Pony.mail(FISC.config['email'].merge(body: message)) if FISC.config['email']
+    end
+
     def self.admin!(message, short_message = nil)
+      puts "Blasting the admin: #{message}"
+
       short_message ||= (message.size > 140) ? message[0..140] : message
 
       # do in order of importance, in case it blows up in the middle
@@ -16,6 +24,8 @@ module FISC
     end
 
     def self.public!(message)
+      puts "Posting to the public: #{message}"
+
       # can't use blunt 140-char check, Twitter handles URLs specially
       Twitter.update(message) if FISC.config['twitter']
     end
