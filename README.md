@@ -1,92 +1,68 @@
-### Watching the Foreign Intelligence Surveillance Court
+## Watching the Foreign Intelligence Surveillance Court
 
-This project "watches" [the public docket of the FISC](http://www.uscourts.gov/uscourts/courts/fisc/index.html), and alerts the public and the administrator through tweets, emails, and texts upon any changes.
+This project "watches" [the public docket of the FISC](http://www.fisc.uscourts.gov/), and upon any changes, alerts the public and the administrator through tweets, emails, and text messages.
 
-More specifically, it is a small Ruby script that downloads the FISC's public docket and compares it against the last time it was run. If there are changes, any configured alert mechanisms (such as SMS or Twitter) will fire.
+It is a small Ruby script that downloads the FISC's public docket and compares it against the last time it was run. If there are changes, any configured alert mechanisms (such as SMS or Twitter) will fire.
 
 To use it, you should have a computer available that can automatically run the script every few minutes, all day throughout the day.
 
 It's currently powering the [@FISACourt](https://twitter.com/fisacourt) Twitter account, maintained by [@konklone](https://twitter.com/konklone).
 
-#### Background
+Reader: **do you work for the FISA Court?** If so, see [my notes at the bottom](#a-note-to-the-fisc).
+
+### Background
 
 The [Foreign Intelligence Surveillance Court](https://en.wikipedia.org/wiki/United_States_Foreign_Intelligence_Surveillance_Court) (FISC) is responsible, under the law known as [FISA](https://en.wikipedia.org/wiki/Foreign_Intelligence_Surveillance_Act), for overseeing the surveillance activity of the US executive branch.
 
-It has operated since 1978, but had no public docket of orders or opinions until June of 2013. That month, amidst heightened public attention to national surveillance policies, the EFF and the ACLU each filed motions aimed at unsealing FISC records, and successfully requested that these motions themselves become public.
+It has operated since 1978, but had no public docket of orders or opinions until June of 2013. That month, amidst heightened public attention to national surveillance policies, the [EFF](https://www.eff.org) and the [ACLU](https://www.aclu.org) each filed motions aimed at unsealing FISC records, and successfully requested that these motions themselves become public.
 
-To publish these, the FISC now operates a minimalist public docket that lists links to scanned image PDFs:
+To publish these, the FISC began operating a minimalist public docket that listed links to, mostly, scanned image PDFs. You can see [what that docket looked like in April of 2014](https://web.archive.org/web/20140416090332/http://www.uscourts.gov/uscourts/courts/fisc/index.html) courtesy of the Internet Archive.
 
-> [http://www.uscourts.gov/uscourts/courts/fisc/index.html](http://www.uscourts.gov/uscourts/courts/fisc/index.html)
+On April 30th, 2014, the FISC launched a more full website at [fisc.uscourts.gov](http://www.fisc.uscourts.gov).
 
-Since then, several other litigants (Microsoft, Google, Yahoo, and Facebook) have filed their own public outstanding motions with FISC. It is expected that future FISC public records will appear at this page.
 
-#### Setup and Usage
 
-Install dependencies:
+### Setup and Usage
+
+Install dependencies with bundler:
 
 ```bash
-gem install git twitter pony twilio-rb pushover
+bundle install
 ```
 
 Copy `config.yml.example` to `config.yml`, then uncomment and fill in any of the sections for `twitter`, `email`, and `twilio` (SMS) to enable those kinds of notifications. They're all optional. Details on enabling each of them are below.
 
-Once configured, run the script to check the FISC website and update `fisa.html`.
+Once configured, run the script to check the first page of FISC filings:
 
 ```bash
-./fisa.rb
+./check
 ```
 
-If the site's changed, the new `fisa.html` will be committed to git, and any alert mechanisms you've configured will fire.
+If there are new filings, the new docket data will be committed to git, and any alert mechanisms you've configured will fire.
 
 **Testing alerts**
 
-To test out your alerts without requiring the FISA Court to actually update or `fisa.html` to change, run:
+To test out your alerts without requiring the FISA Court to actually update, run:
 
 ```bash
-./fisa.rb test
+./check test
 ```
 
 This will pretend a change was made and fire each of your alert mechanisms.
 
-#### Use with Docker
+### Archiving everything
 
-This project can also be setup and run directly via [Docker](http://www.docker.io).
-
-First, clone the repository, then copy `config.yml.example` to `config.yml`:
-
-```
-cp config.yml.example config.yml
-```
-
-Open `config.yml` and fill in any alert mechanisms you want to use, [as described below](#configuring-alerts).
-
-Then, build the container from its Dockerfile, and tag it `fisa`:
+You can run the script with the `archive` command to re-scrape the entire site's metadata, *without* sending alerts and *without* commiting results.
 
 ```bash
-sudo docker build -rm -t fisa .
+./check archive
 ```
 
-Test the container and your alert mechanisms by running this command:
+If changes are made to how data is processed, running an `archive` command will safely re-process everything, and write to the `docket/` directory.
 
-```
-sudo docker run -w /apps/fisa fisa bash -l -c "bundle exec ruby fisa.rb test"
-```
+However, it is up to an admin to review, commit, and push the changes. It's recommended the cronjob be turned off during this process.
 
-Have the `fisa` container do a single real check for FISA Court updates by removing the "test":
-
-```
-sudo docker run -w /apps/fisa fisa bash -l -c "bundle exec ruby fisa.rb"
-```
-
-**OR**, you can leave the container running and checking indefinitely with a single command. This will run the script every 5 minutes inside the container:
-
-```
-sudo docker run -w /apps/fisa fisa bash -l -c "bundle exec clockwork cron.rb"
-```
-
-Bear in mind, you will need to rebuild the container, and with the `-no-cache` flag, to use any updates made to this codebase following your initial container build.
-
-#### Git
+### Git
 
 This project depends on its own git repository to detect and track changes. For git interaction to work correctly, you need to ensure:
 
@@ -99,13 +75,13 @@ If the `git push` fails for some reason, it will continue on and alert the world
 
 If the `git push` succeeds, but the remote branch is not configured correctly, it will post a GitHub URL to a non-existent commit (a 404). If the branch is then configured correctly and the commits pushed, the URL will then work as expected.
 
-#### GitHub integration
+### GitHub integration
 
 If you're using GitHub, then when FISC updates are detected you can have notification messages include a URL to view the change on GitHub.
 
-To do this, set `config.yml`'s `github` value to `username/repo` (using your real username and repo name, e.g. `konklone/fisa`).
+To do this, set `config.yml`'s `github` value to `username/repo` (using your real username and repo name, e.g. `konklone/fisacourt`).
 
-#### Configuring alerts
+### Configuring alerts
 
 Turn on different alert methods by uncommenting and filling out sections of `config.yml`.
 
@@ -190,10 +166,37 @@ And to enable them on your phone:
 * Log into your Pushover account.
 * Give your device a name and "add" it to Pushover.
 
-#### Atom Feed
+### Atom Feed
 
 You can use this URL to follow the FISA Court in your favorite feed reader:
 
-> [https://github.com/konklone/fisa/commits/docket.atom](https://github.com/konklone/fisa/commits/docket.atom)
+> [https://github.com/konklone/fisacourt/commits/docket.atom](https://github.com/konklone/fisacourt/commits/docket.atom)
 
-This works because `fisa.html` is versioned on the `docket` branch, and it is the **only** activity on that branch. So, Github's Atom feed for the `docket` branch is an effective feed for FISA Court updates.
+This works because `fisa.html` is versioned on the `docket` branch, and it is the **only** activity on that branch. So, GitHub's Atom feed for the `docket` branch is an effective feed for FISA Court updates.
+
+### A note to the FISC
+
+If anyone from the FISC is reading this, and wondering why anyone would go to the trouble of scraping your brand new website (with an RSS feed and all):
+
+* Your RSS feeds only show the last 10 items. For anyone to download the full metadata and contents of the docket of the FISC, the RSS feed is not useful.
+* An RSS feed of 10 items also means that, should you need to upload more than 10 documents at once, some data will never appear on the RSS feed.
+* Your RSS feed's `<description>` tags contain a raw HTML blob, which needs to be parsed in order to figure out anything useful (including the actual URL to download a file). So scraping your HTML is a necessity no matter what -- may as well just write a scraper for the whole thing.
+
+There are some additional data problems:
+
+* The publication dates for anything before 4/30 are mostly incorrect. Instead, the dates reflect some sort of batch upload process during the transition from the old to the new site.
+* There are no real unique IDs for documents. URLs use slugs that are auto-generated based on order (e.g. `order-25` for the 25th document titled "Order" uploaded to your site). RSS feeds show a `438 at http://www.fisc.uscourts.gov`, which is clearly an auto-increment database ID (appearing nowhere visible on the site) that I would not want to stake my data interoperability on.
+
+You could eliminate the need for anyone to scrape your website's HTML (and incur load on your systems, etc.) by providing **either** of:
+
+* Improved, separate archival RSS feeds.
+  * Paginate the RSS feed endpoints, so one can trace it back as far as needed.
+  * Simplify the `<description>` tag to just a plaintext description.
+  * (Ab)use `<category>` tags to include any other metadata.
+* A web API to your content.
+  * Your source code indicates you're using Drupal -- this ["services" plugin](https://drupal.org/project/services) seems to be reasonably popular and well-maintained.
+  * Or, you may want to call up the FCC: [they used contentapi](http://www.fcc.gov/encyclopedia/content-api-drupal-module) on their site, though it looks like a less active project.
+  * Or, invent your own. Feel free to take inspiration from other [APIs for public records](https://sunlightlabs.github.io/congress/).
+
+
+Additionally, please assign unique IDs, and fix the publication dates for documents. Instead of reflecting the document's date of entry into the Drupal backend, the dates should reflect when they became public record.

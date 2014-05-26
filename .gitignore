@@ -4,5 +4,7 @@
 /*.log
 .DS_Store
 
-/test-fisa.html
+/test
 /docket
+
+/todo.txt
