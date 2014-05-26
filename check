@@ -40,7 +40,6 @@ if sha and !options[:archive]
 
   FISC::Alerts.admin! message, short_message
   FISC::Alerts.public! message
-  puts "Notified: #{message}"
 else
   puts "Nothing changed."
 end

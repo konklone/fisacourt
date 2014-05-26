@@ -8,12 +8,12 @@ module FISC
 
     # for lower priority things that don't need to get texted every 5 mins
     def self.email!(message)
-      puts "Emailing the admin: #{message}"
+      puts "Emailing the admin:\n#{message}\n\n"
       Pony.mail(FISC.config['email'].merge(body: message)) if FISC.config['email']
     end
 
     def self.admin!(message, short_message = nil)
-      puts "Blasting the admin: #{message}"
+      puts "Blasting the admin:\n#{message}\n\n"
 
       short_message ||= (message.size > 140) ? message[0..140] : message
 

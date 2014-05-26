@@ -61,7 +61,7 @@ module FISC
 
     if !options[:archive] and (FISC::Git.changed? or options[:test_error])
       begin
-        raise Exception.new("Fake git error!") if test_error
+        raise Exception.new("Fake git error!") if options[:test_error]
         FISC::Git.save! "FISC dockets have been updated"
 
       rescue Exception => ex

@@ -18,11 +18,9 @@ module FISC
       puts
     end
 
-    def self.repo
-      @repo ||= Rugged::Repository.new("docket")
-    end
-
     def self.changed?
+      repo = Rugged::Repository.new "docket"
+
       new_files = []
       repo.status do |file, status_data|
         if status_data.include?(:worktree_new)
