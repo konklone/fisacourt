@@ -36,7 +36,7 @@ module FISC
   def self.check!(options: {})
     return "test" if options[:test]
 
-    pages = options[:archive] ? (1..last_page!).to_a : [1]
+    pages = options[:archive] ? (0..last_page!).to_a : [0]
 
     pages.each do |page|
       puts "[#{page}] Downloading filings..."
@@ -57,12 +57,18 @@ module FISC
       end
     end
 
+    puts
     puts "Saved current state of FISC docket."
+    puts
 
-    if !options[:archive] and (FISC::Git.changed? or options[:test_error])
+    # we do specialexception handling here because an exception here
+    # means that there *was* an update, and we should signal back to
+    # the check script that there was, so it posts to the public,
+    # even if there was an error talking to git afterwards.
+    if !options[:archive] and (FISC::Git.changed?)
       begin
         raise Exception.new("Fake git error!") if options[:test_error]
-        FISC::Git.save! "FISC dockets have been updated"
+        FISC::Git.save! "The FISC has published something new."
 
       rescue Exception => ex
         puts "Error doing the git commit and push! #{ex.inspect}"

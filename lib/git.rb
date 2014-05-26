@@ -6,16 +6,17 @@ module FISC
     # ensure git repo/branch for docket is checked out and ready
     # assumptions: remote exists, and branch exists on remote
     def self.init!
-      puts
+      puts "[git] Initializing docket directory..."
+
       if !File.exists?("docket")
-        puts "[git] Cloning docket branch..."
+        # puts "[git] Cloning docket branch..."
         system "git clone --branch #{FISC.config['docket']['branch']} --single-branch #{FISC.config['docket']['remote']} docket"
       end
-      puts "[git] Switching to docket branch..."
+      # puts "[git] Switching to docket branch..."
       system "cd docket && git checkout #{FISC.config['docket']['branch']}"
-      puts "[git] Pulling latest changes..."
+      # puts "[git] Pulling latest changes..."
       system "cd docket && git pull --no-edit"
-      puts
+      # puts
     end
 
     def self.changed?
@@ -32,14 +33,14 @@ module FISC
 
     # only commits and pushes the contents of `docket/filings`
     def self.save!(message)
-      system "cd docket && git add filings"
+      %x[cd docket && git add filings]
 
-      response = %x[git commit -m "#{message}"]
+      response = %x[cd docket && git commit -m "#{message}"]
       sha = response.split(/[ \[\]]/)[2]
-      puts "[#{sha}] Committed with message: #{message}"
+      puts "[git][#{sha}] Committed."
 
-      system "cd docket && git push"
-      puts "[#{sha}] Pushed changes."
+      %x[cd docket && git push]
+      puts "[git][#{sha}] Pushed."
 
       sha
     end

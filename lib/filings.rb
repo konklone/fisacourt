@@ -8,7 +8,7 @@ module FISC
 
     def self.url_for(page: 1)
       # includes both docket activity and correspondence
-      url = FISC::URL
+      url = FISC::URL.dup
       url << "?field_case_reference_nid=All"
       url << "&page=#{page}"
       url << "&t=#{Time.now.to_i}"

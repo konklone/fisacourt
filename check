@@ -24,7 +24,9 @@ begin
 
 # email any uncaught exceptions to the admin
 rescue Exception => exc
-  FISC::Alerts.email! "Error scraping the FISC! #{exc.inspect}"
+  message = "Error scraping the FISC! #{exc.inspect}"
+  puts "[email] #{message}"
+  FISC::Alerts.email! message
   # re-raise
   raise exc
 end
@@ -38,6 +40,7 @@ if sha and !options[:archive]
     message += "\n\nLine-by-line breakdown of what changed:\n#{diff_url}"
   end
 
+  puts "[admin][public]\n#{message}\n\n"
   FISC::Alerts.admin! message, short_message
   FISC::Alerts.public! message
 else
