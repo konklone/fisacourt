@@ -65,7 +65,7 @@ module FISC
     # means that there *was* an update, and we should signal back to
     # the check script that there was, so it posts to the public,
     # even if there was an error talking to git afterwards.
-    if !options[:archive] and (FISC::Git.changed?)
+    if !options[:archive] and (FISC::Git.changed? or options[:test_error])
       begin
         raise Exception.new("Fake git error!") if options[:test_error]
         FISC::Git.save! "The FISC has published something new."

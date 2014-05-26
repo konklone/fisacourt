@@ -16,7 +16,7 @@ module FISC
       system "cd docket && git checkout #{FISC.config['docket']['branch']}"
       # puts "[git] Pulling latest changes..."
       system "cd docket && git pull --no-edit"
-      # puts
+      puts
     end
 
     def self.changed?
@@ -34,13 +34,14 @@ module FISC
     # only commits and pushes the contents of `docket/filings`
     def self.save!(message)
       %x[cd docket && git add filings]
+      %x[cd docket && git commit -m "#{message}"]
 
-      response = %x[cd docket && git commit -m "#{message}"]
-      sha = response.split(/[ \[\]]/)[2]
+      repo = Rugged::Repository.new "docket"
+      sha = repo.last_commit.oid
       puts "[git][#{sha}] Committed."
-
       %x[cd docket && git push]
       puts "[git][#{sha}] Pushed."
+      puts
 
       sha
     end
