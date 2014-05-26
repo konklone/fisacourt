@@ -20,15 +20,13 @@ module FISC
     end
 
     def self.changed?
-      repo = Rugged::Repository.new "docket"
-
-      new_files = []
-      repo.status do |file, status_data|
-        if status_data.include?(:worktree_new)
-          new_files << file
+      Rugged::Repository.new("docket").status do |file, status_data|
+        if (status_data & [:worktree_modified, :worktree_new]).any?
+          return true
         end
       end
-      new_files.any?
+
+      false
     end
 
     # only commits and pushes the contents of `docket/filings`
