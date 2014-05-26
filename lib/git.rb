@@ -1,4 +1,4 @@
-require 'git'
+require 'rugged'
 
 module FISC
   module Git
@@ -19,18 +19,25 @@ module FISC
     end
 
     def self.repo
-      @repo ||= ::Git.open "docket"
+      @repo ||= Rugged::Repository.new("docket")
     end
 
     def self.changed?
-      repo.diff('HEAD','.').entries.length != 0
+      new_files = []
+      repo.status do |file, status_data|
+        if status_data.include?(:worktree_new)
+          new_files << file
+        end
+      end
+      new_files.any?
     end
 
+    # only commits and pushes the contents of `docket/filings`
     def self.save!(message)
-      repo.add "."
+      system "cd docket && git add filings"
 
-      response = repo.commit message
-      sha = repo.gcommit(response.split(/[ \[\]]/)[2]).sha
+      response = %x[git commit -m "#{message}"]
+      sha = response.split(/[ \[\]]/)[2]
       puts "[#{sha}] Committed with message: #{message}"
 
       system "cd docket && git push"

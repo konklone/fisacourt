@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'git'
+gem 'rugged'
 gem 'pushover'
 gem 'twitter'
 gem 'pony'
