@@ -33,6 +33,35 @@ module FISC
     ).read
   end
 
+  # file had better be there
+  def self.sha256(destination)
+    response = `sha256sum "#{destination}"`
+    response.split(/\s+/).first
+  end
+
+  # downloads a PDF with wget to the chosen place, returns a SHA-256 sum
+  def self.download_pdf!(pdf_url, destination)
+    `wget -q "#{pdf_url}" -O "#{destination}"`
+
+    # puts "\tSleeping 1s to play nice..."
+    sleep 1
+
+    if File.exist?(destination)
+      sha256 destination
+    else
+      raise Exception.new("Couldn't download #{pdf_url}")
+    end
+  end
+
+  # make a HEAD request and get the current etag
+  def self.etag!(url)
+    response = `curl -s --head "#{url}"`
+    header = response.split(/[\r\n]+/).find {|l| l =~ /ETag/i}
+    return nil unless header
+    etag = header.split(/:\s*/)[1].gsub("\"", "")
+    etag
+  end
+
   def self.check!(options: {})
     return "test" if options[:test]
 
@@ -50,9 +79,55 @@ module FISC
       # parse filing data out of the HTML
       filings = FISC::Filings.for_page body
 
+      # debugging convenience
+      if options[:one]
+        filings = [filings[0]]
+      end
+
       # save a file for each one into the docket dir
       filings.each do |filing|
-        puts "\t[#{filing['id']}] "
+        pdf_path = FISC::Filings.pdf_path_for filing
+        data_path = FISC::Filings.data_path_for filing
+        sha = nil
+
+        etag = etag! filing['file_url']
+        if etag.nil?
+          puts "\t[#{filing['id']}] Error looking for ETag - skipping."
+          next
+        end
+
+
+        # possible situations:
+        # 1) data or PDF has never been downloaded, and so should be
+        if !File.exists?(data_path) or !File.exists?(pdf_path)
+          puts "\t[#{filing['id']}] First time, downloading..."
+          sha = download_pdf! filing['file_url'], pdf_path
+
+        else
+          puts "\t[#{filing['id']}] Have it, grabbing ETag..."
+          old_etag = FISC::Filings.data_for(filing)['last_etag']
+
+          # 2) the PDF is here, but the etag doesn't match, so re-download
+          if (old_etag != etag)
+            puts "\t[#{filing['id']}] Unmatched ETag, downloading..."
+            sha = download_pdf! filing['file_url'], pdf_path
+
+          # 3) the PDF is here and etag matches, but we asked to re-download
+          elsif options[:everything]
+            puts "\t[#{filing['id']}] Asked for everything, downloading..."
+            sha = download_pdf! filing['file_url'], pdf_path
+
+          # 4) none of those, so don't download, read the sha256 from disk
+          else
+            puts "\t[#{filing['id']}] Matched ETag, using local file..."
+            sha = sha256 pdf_path
+          end
+        end
+
+        puts "\t[#{filing['id']}][#{sha[0..6]}] SHA'd the PDF."
+        filing['last_sha'] = sha
+        filing['last_etag'] = etag
+
         FISC::Filings.save! filing
       end
     end

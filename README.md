@@ -24,6 +24,8 @@ On April 30th, 2014, the FISC launched a more full website at [fisc.uscourts.gov
 
 ### Setup and Usage
 
+You'll need a *nix-based system (not Windows) with `curl` and `wget` installed.
+
 Install dependencies with bundler:
 
 ```bash
@@ -40,7 +42,10 @@ Once configured, run the script to check the first page of FISC filings:
 
 If there are new filings, the new docket data will be committed to git, and any alert mechanisms you've configured will fire.
 
-**Testing alerts**
+By default, `check` will check ETags for already downloaded PDFs, and only re-download PDFs if the ETags don't match. To force a re-download of PDFs, use `./check everything`.
+
+
+### Testing alerts
 
 To test out your alerts without requiring the FISA Court to actually update, run:
 
@@ -56,6 +61,16 @@ You can run the script with the `archive` command to re-scrape the entire site's
 
 ```bash
 ./check archive
+```
+
+If changes are left in an uncommitted state, the next time a normal `./check` is run, it'll notice the changes and alert at that time.
+
+By default, `check archive` will check ETags for already downloaded PDFs, and only re-download PDFs if the ETags don't match.
+
+To force a re-download of all PDFs:
+
+```bash
+./check archive everything
 ```
 
 If changes are made to how data is processed, running an `archive` command will safely re-process everything, and write to the `docket/` directory.

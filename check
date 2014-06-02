@@ -11,10 +11,12 @@ FISC::Alerts.config!
 FISC::Git.init!
 
 options = {
-  test: (ARGV[0] == "test"),
-  test_error: (ARGV[0] == "test_error"),
-  use_file: (ARGV[0] == "use_file"),
-  archive: (ARGV[0] == "archive")
+  test: (ARGV.include?("test")),
+  test_error: (ARGV.include?("test_error")),
+  use_file: (ARGV.include?("use_file")),
+  archive: (ARGV.include?("archive")),
+  everything: (ARGV.include?("everything")),
+  one: (ARGV.include?("one"))
 }
 
 # always download data from the FISC, get any resulting commit SHA

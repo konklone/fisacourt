@@ -53,19 +53,26 @@ module FISC
     def self.save!(filing)
       dir = "docket/filings"
       FileUtils.mkdir_p dir
-      path = "#{dir}/#{filing['id']}.yml"
+      path = data_path_for filing
       yaml = YAML.dump filing
       File.open(path, "w") {|file| file.write yaml}
       true
     end
 
-    # TODO FOR LATER:
-    # make another web request to the detail page for a filing,
-    # stick the description onto the hash, and return the hash
-    def self.fetch_detail!(filing)
-
+    # same filename as on server, in a subdir of filings
+    def self.pdf_path_for(filing)
+      filename = File.basename(URI.split(filing['file_url'])[5])
+      File.join "docket/filings/pdfs", filename
     end
 
+    def self.data_path_for(filing)
+      File.join "docket/filings/#{filing['id']}.yml"
+    end
+
+    # assumes data file is there
+    def self.data_for(filing)
+      YAML.load_file(data_path_for filing)
+    end
   end
 
 end
