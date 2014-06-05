@@ -21,7 +21,6 @@ To publish these, the FISC began operating a minimalist public docket that liste
 On April 30th, 2014, the FISC launched a more full website at [fisc.uscourts.gov](http://www.fisc.uscourts.gov).
 
 
-
 ### Setup and Usage
 
 You'll need a *nix-based system (not Windows) with `curl` and `wget` installed.
@@ -187,14 +186,14 @@ You can use this URL to follow the FISA Court in your favorite feed reader:
 
 > [https://github.com/konklone/fisacourt/commits/docket.atom](https://github.com/konklone/fisacourt/commits/docket.atom)
 
-This works because `fisa.html` is versioned on the `docket` branch, and it is the **only** activity on that branch. So, GitHub's Atom feed for the `docket` branch is an effective feed for FISA Court updates.
+This works because the FISC's docket is versioned on the `docket` branch, and it is the **only** activity on that branch. So, GitHub's Atom feed for the `docket` branch is effectively a feed for FISA Court updates.
 
 ### A note to the FISC
 
 If anyone from the FISC is reading this, and wondering why anyone would go to the trouble of scraping your brand new website (with an RSS feed and all):
 
 * Your RSS feeds only show the last 10 items. For anyone to download the full metadata and contents of the docket of the FISC, the RSS feed is not useful.
-* An RSS feed of 10 items also means that, should you need to upload more than 10 documents at once, some data will never appear on the RSS feed.
+* An RSS feed of 10 items also means that, should you ever upload more than 10 documents in one batch, some data will never appear on the RSS feed.
 * Your RSS feed's `<description>` tags contain a raw HTML blob, which needs to be parsed in order to figure out anything useful (including the actual URL to download a file). So scraping your HTML is a necessity no matter what -- may as well just write a scraper for the whole thing.
 
 There are some additional data problems:
@@ -213,8 +212,13 @@ You could eliminate the need for anyone to scrape your website's HTML (and incur
   * Or, you may want to call up the FCC: [they used contentapi](http://www.fcc.gov/encyclopedia/content-api-drupal-module) on their site, though it looks like a less active project.
   * Or, invent your own. Feel free to take inspiration from other [APIs for public records](https://sunlightlabs.github.io/congress/).
 
+Also, please assign unique IDs, and fix the publication dates for documents. Instead of reflecting the document's date of entry into the Drupal backend, the dates should reflect when they became public record.
 
-Additionally, please assign unique IDs, and fix the publication dates for documents. Instead of reflecting the document's date of entry into the Drupal backend, the dates should reflect when they became public record.
+One major issue (for you and me both, given the bandwidth) are all the PDFs. This system downloads every PDF once, and then uses [ETags](https://en.wikipedia.org/wiki/HTTP_ETag) to decide whether to ever re-download the PDF. However, ETags have no defined algorithm for calculating them, and without additional documentation, they can't be fully trusted. Because of this, the system has a mechanism to distrust ETags and force a re-download of everything. I'm not doing this very often, because of the expense. I could also use `Last-Modified` headers, but I'm honestly not sure I trust those either.
+
+This expense could be mitigated by increasing that trust. That could be by publishing MD5SUMs or SHA hashes of each filing, in an index of some sort. Or, it could be by publicly documenting your algorithm for calculating ETags or `Last-Modified` headers. (You could do this last one by opening your website's source code. Open source is secure, I promise.)
+
+Finally: please **provide a public email address**. That phone number to a voicemail machine is not an effective way to file bug reports, or, really, do anything at all.
 
 ## Public domain
 
