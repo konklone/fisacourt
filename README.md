@@ -2,7 +2,7 @@
 
 This project "watches" [the public docket of the FISC](http://www.fisc.uscourts.gov/), and upon any changes, alerts the public and the administrator through tweets, emails, and text messages.
 
-It is a small Ruby script that downloads the FISC's public docket and compares it against the last time it was run. If there are changes, any configured alert mechanisms (such as SMS or Twitter) will fire.
+It is a Ruby script that downloads the FISC's public docket and compares it against the last time it was run. If there are changes, any configured alert mechanisms (such as SMS or Twitter) will fire.
 
 To use it, you should have a computer available that can automatically run the script every few minutes, all day throughout the day.
 
