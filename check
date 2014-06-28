@@ -34,12 +34,12 @@ rescue Exception => exc
 end
 
 if sha and !options[:archive]
-  message = "Just updated with something!\n#{FISC::URL}"
+  message = "Something changed on the docket just now!\n#{FISC::URL}"
   short_message = message.dup
 
   if FISC.config['github'] and sha.is_a?(String)
     diff_url = "https://github.com/#{FISC.config['github']}/commit/#{sha}"
-    message += "\n\nLine-by-line breakdown of what changed:\n#{diff_url}"
+    message += "\n\nSee the gritty details:\n#{diff_url}"
   end
 
   puts "[admin][public]\n#{message}\n\n"
