@@ -88,8 +88,12 @@ module FISC
     end
 
     def save
-      FISC.archive.set data_path, data.to_yaml
       FISC.archive.set pdf_path, remote_contents
+      data = {
+        :last_sha  => local_checksum,
+        :last_etag => etag
+      }.merge(data)
+      FISC.archive.set data_path, data.to_yaml
     end
 
     def inspect

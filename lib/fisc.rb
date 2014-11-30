@@ -55,6 +55,7 @@ module FISC
           # data or PDF has never been downloaded, and so should be or
           elsif !filing.saved?
             FISC.logger.debug "Saving #{filing.id} because it's a known unknown"
+            filing.save
 
           # the PDF is here, but the etag doesn't match, so re-download
           elsif filing.etag != filing.last_known_etag
