@@ -1,10 +1,10 @@
 GIT
   remote: git://github.com/stevegraham/twilio-rb.git
-  revision: 2501ef697a41d4768ae285674d2a9e6491b6e986
+  revision: 11960bfa4cf0f7d2cfaee35ee3a0708e93993146
   specs:
     twilio-rb (2.3.0)
       activesupport (>= 3.0.0)
-      builder (>= 3.1.0)
+      builder (>= 3.0.0)
       crack (~> 0.3.2)
       httparty (>= 0.10.0)
       i18n (~> 0.5)
@@ -13,69 +13,96 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (4.0.0)
-      i18n (~> 0.6, >= 0.6.4)
-      minitest (~> 4.2)
-      multi_json (~> 1.3)
+    activesupport (4.1.8)
+      i18n (~> 0.6, >= 0.6.9)
+      json (~> 1.7, >= 1.7.7)
+      minitest (~> 5.1)
       thread_safe (~> 0.1)
-      tzinfo (~> 0.3.37)
-    atomic (1.1.14)
+      tzinfo (~> 1.1)
+    addressable (2.3.6)
     bini (0.6.0)
       sys-proctable
+    buftok (0.2.0)
     builder (3.2.2)
-    clockwork (0.6.2)
+    change_agent (0.2.2)
+      dotenv (~> 1.0)
+      rugged (~> 0.21)
+    clockwork (1.1.0)
       activesupport
-      tzinfo (~> 0.3.35)
+      tzinfo
+    coderay (1.1.0)
     crack (0.3.2)
-    faraday (0.8.8)
-      multipart-post (~> 1.2.0)
-    httparty (0.12.0)
+    dotenv (1.0.2)
+    equalizer (0.0.9)
+    ethon (0.7.1)
+      ffi (>= 1.3.0)
+    faraday (0.9.0)
+      multipart-post (>= 1.2, < 3)
+    ffi (1.9.6)
+    http (0.6.3)
+      http_parser.rb (~> 0.6.0)
+    http_parser.rb (0.6.0)
+    httparty (0.13.3)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
-    i18n (0.6.5)
+    i18n (0.6.11)
     json (1.8.1)
-    jwt (0.1.8)
-      multi_json (>= 1.5)
-    mail (2.5.4)
-      mime-types (~> 1.16)
-      treetop (~> 1.4.8)
-    mime-types (1.25)
-    mini_portile (0.6.0)
-    minitest (4.7.5)
-    multi_json (1.8.2)
+    jwt (1.2.0)
+    mail (2.6.3)
+      mime-types (>= 1.16, < 3)
+    memoizable (0.4.2)
+      thread_safe (~> 0.3, >= 0.3.1)
+    method_source (0.8.2)
+    mime-types (2.4.3)
+    mini_portile (0.6.1)
+    minitest (5.4.3)
     multi_xml (0.5.5)
-    multipart-post (1.2.0)
-    nokogiri (1.6.2.1)
-      mini_portile (= 0.6.0)
-    polyglot (0.3.3)
-    pony (1.5.1)
+    multipart-post (2.0.0)
+    naught (1.0.0)
+    nokogiri (1.6.5)
+      mini_portile (~> 0.6.0)
+    pony (1.11)
       mail (>= 2.0)
+    pry (0.10.1)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
     pushover (0.99.2)
       bini (~> 0.6.0)
       yajl-ruby
-    rugged (0.19.0)
-    simple_oauth (0.2.0)
-    sys-proctable (0.9.3)
-    thread_safe (0.1.3)
-      atomic
-    treetop (1.4.15)
-      polyglot
-      polyglot (>= 0.3.1)
-    twitter (4.8.1)
-      faraday (~> 0.8, < 0.10)
-      multi_json (~> 1.0)
-      simple_oauth (~> 0.2)
-    tzinfo (0.3.38)
-    yajl-ruby (1.1.0)
+    rugged (0.21.2)
+    simple_oauth (0.3.0)
+    slop (3.6.0)
+    sys-proctable (0.9.4)
+    thread_safe (0.3.4)
+    twitter (5.13.0)
+      addressable (~> 2.3)
+      buftok (~> 0.2.0)
+      equalizer (~> 0.0.9)
+      faraday (~> 0.9.0)
+      http (~> 0.6.0)
+      http_parser.rb (~> 0.6.0)
+      json (~> 1.8)
+      memoizable (~> 0.4.0)
+      naught (~> 1.0)
+      simple_oauth (~> 0.3.0)
+    typhoeus (0.6.9)
+      ethon (>= 0.7.1)
+    tzinfo (1.2.2)
+      thread_safe (~> 0.1)
+    yajl-ruby (1.2.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  change_agent (~> 0.2.2)
   clockwork
   nokogiri
   pony
+  pry
   pushover
   rugged
   twilio-rb!
   twitter
+  typhoeus
