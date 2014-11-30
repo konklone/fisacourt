@@ -20,7 +20,7 @@ module FISC
     end
 
     def last_page?
-      !!doc.at("li.pager-last")
+      !doc.at("li.pager-last")
     end
 
     def rows
