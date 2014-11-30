@@ -41,6 +41,7 @@ module FISC
     alias_method :options, :config
 
     def check
+      FISC.logger.debug "Starting check"
       page = FilingList.new(1)
       while !page.last_page? do
         FISC.logger.debug "Starting Page #{page.page_number} with #{page.filings.count} filings"
@@ -67,6 +68,7 @@ module FISC
         end
         page = FilingList.new(page.page_number + 1) # page++
       end
+      FISC.logger.debug "Fin."
     end
   end
 end
