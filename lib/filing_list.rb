@@ -8,11 +8,11 @@ module FISC
     end
 
     def url
-      "http://#{FISC::DOMAIN}/public-filings?field_case_reference_nid=All&page=#{page_number}"
+      "#{FISC::DOMAIN}/public-filings?field_case_reference_nid=All&page=#{page_number}"
     end
 
     def html
-      @html ||= open(url).read
+      @html ||= Typhoeus.get(url).body
     end
 
     def doc

@@ -1,8 +1,8 @@
-require 'open-uri'
 require 'nokogiri'
-require 'net/http'
 require 'nokogiri'
 require 'logger'
+require 'typhoeus'
+require 'change_agent'
 
 require_relative 'filing'
 require_relative 'filing_list'
@@ -18,6 +18,10 @@ module FISC
 
   def self.logger
     @logger ||= Logger.new(STDOUT)
+  end
+
+  def self.archive
+    @archive ||= ChangeAgent.init "docket"
   end
 
   class App
@@ -45,8 +49,7 @@ module FISC
             FISC.logger.debug "Filing #{filing.id} is a known known"
           end
         end
-        # page++
-        page = FilingList.new(page.page_number + 1)
+        page = FilingList.new(page.page_number + 1) # page++
       end
     end
   end

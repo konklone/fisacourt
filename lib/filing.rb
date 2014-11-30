@@ -11,25 +11,24 @@ module FISC
       data[:id]
     end
 
-    def remote_path
-      "/sites/default/files/#{id}"
+    def pdf_id
+      File.basename(URI.split(data[:file_url])[5])
+    end
+
+    def pdf_url
+      "#{FISC::DOMAIN}/sites/default/files/#{pdf_id}"
     end
 
     def pdf_path
-      @pdf_path ||= "filings/pdf/#{File.basename(URI.split(remote_path)[5])}.pdf"
+      "filings/pdf/#{pdf_id}.pdf"
     end
 
     def remote_contents
-      Net::HTTP.start(FISC::DOMAIN) do |http|
-        resp = http.get(remote_path)
-        open(pdf_path, "wb") do |file|
-          file.write(resp.body)
-        end
-      end
+      @remote_contents ||= Typhoeus.get(pdf_url).body
     end
 
     def local_contents
-
+      FISC.archive.get pdf_path
     end
 
     def data_path
@@ -37,7 +36,7 @@ module FISC
     end
 
     def data
-      @data ||= YAML.load_file data_path
+      @data ||= YAML.load_file FISC.archive.get data_path
     end
 
     def data=(data)
@@ -61,9 +60,7 @@ module FISC
     end
 
     def etag
-      @etag ||= Net::HTTP.start(FISC::DOMAIN) do |http|
-        http.head(remote_path)["ETag"].gsub('"','')
-      end
+      @etag ||= Typhoeus.head(pdf_url).headers[:ETag].gsub('"', '')
     end
 
     def last_known_etag
@@ -71,7 +68,8 @@ module FISC
     end
 
     def save
-
+      FISC.archive.set data_path, data
+      FISC.archive.set pdf_path, remote_contents
     end
 
     private
