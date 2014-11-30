@@ -1,9 +1,16 @@
-require 'nokogiri'
-require 'nokogiri'
+# stdlib
+require 'uri'
+require 'time'
 require 'logger'
+require 'yaml'
+
+# 3d party
+require 'nokogiri'
+require 'nokogiri'
 require 'typhoeus'
 require 'change_agent'
 
+# FISC
 require_relative 'filing'
 require_relative 'filing_list'
 require_relative 'filing_list_row'
@@ -38,15 +45,24 @@ module FISC
       while !page.last_page? do
         FISC.logger.debug "Starting Page #{page.page_number} with #{page.filings.count} filings"
         page.filings.each do |filing|
-          # A few options:
-          # 1. Burn it down mode
-          # 2. data or PDF has never been downloaded, and so should be or
-          # 3. the PDF is here, but the etag doesn't match, so re-download
-          if config[:everything] || !filing.saved? || filing.etag != filing.last_known_etag
-            FISC.logger.debug "Filing #{filing.id} is a known unkonwn"
+
+          # Burn it down mode
+          if config[:everything]
+            FISC.logger.debug "Saving #{filing.id} because YOLO"
             filing.save
+
+          # data or PDF has never been downloaded, and so should be or
+          elsif !filing.saved?
+            FISC.logger.debug "Saving #{filing.id} because it's a known unknown"
+
+          # the PDF is here, but the etag doesn't match, so re-download
+          elsif filing.etag != filing.last_known_etag
+            FISC.logger.debug "Saving #{filing.id} because etags don't match"
+            filing.save
+
+          # It's a unix system. We know this.
           else
-            FISC.logger.debug "Filing #{filing.id} is a known known"
+            FISC.logger.debug "Skipping #{filing.id} because it's a known known"
           end
         end
         page = FilingList.new(page.page_number + 1) # page++

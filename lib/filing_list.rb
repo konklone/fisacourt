@@ -29,7 +29,11 @@ module FISC
     end
 
     def filings
-      @filings ||= rows.map { |r| Filing.new(Row.new(r).to_hash) }
+      @filings ||= rows.map { |node| Filing.from_hash(Row.new(node).to_hash) }
+    end
+
+    def inspect
+      "#<FISC:FilingList page_number=#{page_number} filings=#{filings.count}>"
     end
   end
 end
