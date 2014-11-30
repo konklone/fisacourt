@@ -20,8 +20,7 @@ module FISC
     end
 
     def last_page?
-      link = doc.at("li.pager-last").at("a")['href']
-      page_number == link.scan(/page=(\d+)/).first.first.to_i
+      !!doc.at("li.pager-last")
     end
 
     def rows
