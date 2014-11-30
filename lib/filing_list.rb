@@ -8,7 +8,7 @@ module FISC
     end
 
     def url
-      "#{FISC::DOMAIN}/public-filings?field_case_reference_nid=All&page=#{page_number}"
+      "http://#{FISC::DOMAIN}/public-filings?field_case_reference_nid=All&page=#{page_number}"
     end
 
     def html

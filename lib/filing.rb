@@ -16,7 +16,7 @@ module FISC
     end
 
     def pdf_path
-      @pdf_path ||= "filings/pdf/#{File.basename(URI.split(remote_path)[5])}"
+      @pdf_path ||= "filings/pdf/#{File.basename(URI.split(remote_path)[5])}.pdf"
     end
 
     def remote_contents
@@ -33,7 +33,7 @@ module FISC
     end
 
     def data_path
-      "filings/#{key}.yml"
+      "filings/#{id}.yml"
     end
 
     def data
@@ -56,16 +56,28 @@ module FISC
       remote_checksum != local_checksum
     end
 
+    def saved?
+      data.nil? || !local_contents.nil?
+    end
+
     def etag
       @etag ||= Net::HTTP.start(FISC::DOMAIN) do |http|
-        http.head(remote_path)["ETag"]
+        http.head(remote_path)["ETag"].gsub('"','')
       end
+    end
+
+    def last_known_etag
+      data[:etag]
+    end
+
+    def save
+
     end
 
     private
 
     def checksum(content)
-      Digest::SHA256.hexidigest(content)
+      Digest::SHA256.hexdigest(content)
     end
   end
 end

@@ -18,7 +18,7 @@ module FISC
       end
 
       def landing_url
-        URI.join("#{FISC::DOMAIN}/public-filings", relative_url).to_s
+        URI.join("http://#{FISC::DOMAIN}/public-filings", relative_url).to_s
       end
 
       def id
